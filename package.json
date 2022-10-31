@@ -1,5 +1,5 @@
 {
-  "name": "raja-ongkir",
+  "name": "raja-ongkir-bradeer",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -12,14 +12,11 @@
     "@headlessui/react": "^1.7.3",
     "@heroicons/react": "^2.0.12",
     "aos": "^3.0.0-beta.6",
-    "net": "^1.0.2",
     "next": "13.0.0",
     "nextjs-progressbar": "^0.0.16",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-lottie": "^1.2.3",
-    "request": "^2.88.2",
-    "tls": "^0.0.1"
+    "react-lottie": "^1.2.3"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.13",
