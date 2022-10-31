@@ -153,21 +153,23 @@ export default function Changelogs() {
 						<main className="mx-auto">
 							<div className=" bg-white">
 								<div
-									className="flex justify-center items-center pointer-events-none"
+									className="flex justify-center items-center"
 									data-aos="fade-left"
 								>
-									<DeliveryAnimation />
+									<div className="pointer-events-none">
+										<DeliveryAnimation />
+									</div>
 								</div>
 								<h1 className="m-10 flex text-xl font-bold text-gray-800 sm:place-content-center">
 									<span className="text-indigo-600 mr-1">
 										Being Maintenanced :{" "}
 									</span>{" "}
-									Changelogs Page is deliverying to you
+									Changelogs Page is delivering to you
 									{/* //// */}
 								</h1>
 							</div>
 							<div className="absolute lg:fixed bottom-0 right-0 left-0 w-screen p-10 px-24">
-								<footer className="rounded-lg shadow  flex items-center justify-between p-6 dark:bg-gray-800">
+								<footer className="rounded-lg shadow  flex items-center justify-between p-6">
 									<span className="text-sm text-gray-500 text-center hover:text-indigo-600">
 										© 2022 <a href="https://bradeer.my.id/">Bradeer.my.id™</a>
 									</span>
