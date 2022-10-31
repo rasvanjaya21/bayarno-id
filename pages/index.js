@@ -6,12 +6,14 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import CheckoutAnimation from "../components/background/checkout-animation";
 import DeliveryAnimation from "../components/delivery/delivery-animation";
 import PatternAnimation from "../components/pattern/pattern-animation";
-import FetchAPI from "../libs/fetch-api";
 import RadioGroupcomponent from "../components/radio/radio-group";
 import ListProducts from "../components/product/list-products";
 import Link from "next/link";
 
-export default function Home() {
+export default function Home({ dataProvince, dataCity, dataCost }) {
+	// console.log(dataProvince);
+	// console.log(dataCity);
+	// console.log(dataCost);
 	const navigation = [
 		{
 			name: "Home",
@@ -46,12 +48,8 @@ export default function Home() {
 	];
 
 	const [pageState, setPageState] = React.useState();
-	const [endPoint, setEndPoint] = React.useState(`/api/stories?populate=*`);
+	const [endPoint, setEndPoint] = React.useState(`/province`);
 	const [isCekOngkir, setIsCekOngkir] = React.useState(false);
-
-	React.useEffect(() => {
-		FetchAPI(endPoint);
-	}, [endPoint]);
 
 	return (
 		<>
@@ -184,7 +182,7 @@ export default function Home() {
 											<div className="lg:absolute lg:inset-y-0 lg:right-24 lg:top-48 pointer-events-none">
 												{/* <CheckoutAnimation /> */}
 												<PatternAnimation />
-											{/* <DeliveryAnimation /> */}
+												{/* <DeliveryAnimation /> */}
 											</div>
 										</div>
 										<div className="flex w-6/12">
@@ -266,7 +264,7 @@ export default function Home() {
 							)}
 
 							<div className="absolute lg:fixed bottom-0 right-0 left-0 w-screen p-10 px-24">
-								<footer className="rounded-lg shadow  flex items-center justify-between p-6 dark:bg-gray-800">
+								<footer className="rounded-lg shadow  flex items-center justify-between p-6">
 									<span className="text-sm text-gray-500 text-center hover:text-indigo-600">
 										© 2022 <a href="https://bradeer.my.id/">Bradeer.my.id™</a>
 									</span>
@@ -304,4 +302,41 @@ export default function Home() {
 			</div>
 		</>
 	);
+}
+
+export async function getServerSideProps() {
+	// base
+	const baseUrl = process.env.RAJAONGKIR_API_URL;
+	const key = process.env.RAJAONGKIR_API_KEY;
+
+	// get all province
+	const resProvince = await fetch(baseUrl + `/province`, {
+		method: "GET",
+		headers: { key },
+	});
+	const dataProvince = await resProvince.json();
+
+	// get all city
+	const resCity = await fetch(baseUrl + `/city`, {
+		method: "GET",
+		headers: { key },
+	});
+	const dataCity = await resCity.json();
+
+	// get all cost
+	const resCost = await fetch(baseUrl + `/cost`, {
+		method: "POST",
+		headers: { key, "content-type": "application/x-www-form-urlencoded" },
+		body: new URLSearchParams({
+			origin: "501",
+			destination: "114",
+			weight: 1700,
+			courier: "jne",
+		}),
+		form: { URLSearchParams },
+	});
+
+	const dataCost = await resCost.json();
+
+	return { props: { dataProvince, dataCity, dataCost } };
 }
