@@ -1,51 +1,68 @@
 import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
 
-const plans = [
+const products = [
 	{
 		name: "Surya 12",
-		ram: "Rp. 22.500",
-		cpus: "",
-		disk: "",
+		description: "Rp. 22.500",
 	},
 	{
 		name: "Juara",
-		ram: "Rp. 14.000",
-		cpus: "",
-		disk: "",
+		description: "Rp. 14.000",
+	}
+];
+
+const couriers = [
+	{
+		name: "JNE",
+		description:
+			"2 layanan tersedia : pengecekan  OKE (Ongkos Kirim Ekonomis) dan REG (Layanan Regular)",
 	},
 	{
-		name: "GA Black",
-		ram: "Rp. 10.000",
-		cpus: "",
-		disk: "",
+		name: "POS Indonesia",
+		description: "1 layanan tersedia : pengecekan  POS Regular (Regular Service)",
+	},
+	{
+		name: "TIKI",
+		description:
+			"3 layanan tersedia : pengecekan  ECO (Economy Service), REG dan ONS (Over Night Service)",
 	},
 ];
 
-export default function RadioGroupComponent() {
-	const [selected, setSelected] = useState(plans[0]);
+export default function RadioGroupComponent( { variant }) {
 
+	const pickedVariant = variant === "products" ? products : couriers;
+	const [selected, setSelected] = useState(pickedVariant[0]);
+	
 	return (
-		<div className="mt-[-80px] flex w-full">
+		<div className="flex w-full">
 			<div className="w-full">
-				<div className="mb-4">Variant Products : </div>
-				<RadioGroup value={selected} onChange={setSelected}>
-					<RadioGroup.Label className="sr-only">Server size</RadioGroup.Label>
-					<div className="space-y-2">
-						{plans.map((plan) => (
+				<RadioGroup
+				className="space-x-4"
+					value={selected}
+					onChange={(event) => {
+						setSelected(event);
+						console.log(event.name + " " + event.description);
+					}}
+				>
+					{/* <RadioGroup.Label className="sr-only">Server size</RadioGroup.Label> */}
+					<div className="space-y-4">
+						{pickedVariant.map((pickedVariant) => (
 							<RadioGroup.Option
-								key={plan.name}
-								value={plan}
+								key={pickedVariant.name}
+								value={pickedVariant}
 								className={({ active, checked }) =>
 									`${
 										active
-											? "ring-2 ring-white ring-opacity-60 ring-offset-2 ring-offset-sky-300"
+											? ""
 											: ""
 									}
                   ${
-										checked ? "bg-sky-900 bg-opacity-75 text-white" : "bg-white"
+										checked
+											? "bg-indigo-600 text-white"
+											: "bg-white"
 									}
-                    relative flex cursor-pointer rounded-lg px-5 py-4 shadow-md focus:outline-none`
+                    relative flex cursor-pointer rounded-lg px-5 py-3.5 shadow-md focus:outline-none`
 								}
 							>
 								{({ active, checked }) => (
@@ -59,19 +76,17 @@ export default function RadioGroupComponent() {
 															checked ? "text-white" : "text-gray-900"
 														}`}
 													>
-														{plan.name}
+														{pickedVariant.name}
 													</RadioGroup.Label>
 													<RadioGroup.Description
 														as="span"
 														className={`inline ${
-															checked ? "text-sky-100" : "text-gray-500"
-														}`}
+															checked ? "text-white" : "text-gray-500"
+														} text-xs`}
 													>
 														<span>
-															{plan.ram}{plan.cpus}
-														</span>{" "}
-														<span aria-hidden="true">&middot;</span>{" "}
-														<span>{plan.disk}</span>
+															{pickedVariant.description}
+														</span>
 													</RadioGroup.Description>
 												</div>
 											</div>

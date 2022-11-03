@@ -15,8 +15,8 @@ export default function PatternAnimation() {
 	return (
 		<Lottie
 			options={defaultOptions}
-			height={400}
-			width={500}
+			height={300}
+			width={400}
 			isClickToPauseDisabled={true}
 		/>
 	);

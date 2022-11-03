@@ -67,9 +67,9 @@ export default function About() {
 					</div>
 				</div>
 				<div className="mx-auto">
-					<div className="relative z-10 w-screen p-10 px-24">
+					<div className="relative z-10 p-24">
 						<Popover>
-							<div className="relative">
+							<div className="bg-white shadow lg:fixed right-0 top-0 p-7  w-screen px-24 ">
 								<nav
 									className="relative flex items-center justify-between sm:h-10"
 									aria-label="Global"
@@ -90,7 +90,7 @@ export default function About() {
 															fill="#4F46E5"
 														/>
 													</svg>
-													<div className="self-center text-indigo-600 ml-1">
+													<div className="self-center text-indigo-600 ml-3 pt-1.5">
 														Raja Ongkir Bradeer
 													</div>
 												</div>
@@ -114,6 +114,7 @@ export default function About() {
 												{item.name}
 											</Link>
 										))}
+
 										{/* eslint-disable-next-line react/jsx-no-target-blank */}
 										<a
 											href="https://github.com/rasvanjaya21/raja-ongkir-bradeer"
