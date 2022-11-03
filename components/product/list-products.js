@@ -51,7 +51,7 @@ export default function ListProducts( { label, data } ) {
 			<Combobox value={selected} onChange={setSelected}>
 				<div className="relative">
 					<div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
-						<Combobox.Button className="absolute inset-y-0 pl-3 text-white flex items-center pr-2 bg-indigo-600 w-20">
+						<Combobox.Button className="absolute inset-y-0 pl-3 text-white flex items-center pr-2 bg-primary-600 w-20">
 							{pickedLabel}
 						</Combobox.Button>
 						<Combobox.Input
@@ -85,7 +85,7 @@ export default function ListProducts( { label, data } ) {
 										className={({ active }) =>
 											`relative cursor-default select-none py-2 m-3 pl-3 pr-4 ${
 												active
-													? "bg-indigo-600 text-white rounded-md"
+													? "bg-primary-600 text-white rounded-md"
 													: "text-gray-900"
 											}`
 										}
@@ -103,7 +103,7 @@ export default function ListProducts( { label, data } ) {
 												{selected ? (
 													<span
 														className={`absolute inset-y-0 right-0 flex items-center mr-2 ${
-															active ? "text-white" : "text-indigo-600"
+															active ? "text-white" : "text-primary-600"
 														}`}
 													>
 														<CheckIcon className="h-5 w-5" aria-hidden="true" />

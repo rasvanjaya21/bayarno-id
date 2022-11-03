@@ -59,7 +59,7 @@ export default function RadioGroupComponent( { variant }) {
 									}
                   ${
 										checked
-											? "bg-indigo-600 text-white"
+											? "bg-primary-600 text-white"
 											: "bg-white"
 									}
                     relative flex cursor-pointer rounded-lg px-5 py-3.5 shadow-md focus:outline-none`

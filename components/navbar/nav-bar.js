@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Logo from "../components/logo/logo";
 import "boxicons/css/boxicons.min.css";
 import NavIcon from "./nav-icon";
 import NavItem from "./nav-item";

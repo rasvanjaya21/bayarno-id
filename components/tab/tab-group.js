@@ -73,7 +73,7 @@ export default function TabGroup() {
 							className={({ selected }) =>
 								classNames(
 									"w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-white",
-									selected ? "bg-indigo-600 outline-none" : "text-gray-600"
+									selected ? "bg-primary-600 outline-none" : "text-gray-600"
 								)
 							}
 						>
