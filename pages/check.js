@@ -142,8 +142,8 @@ export default function Check() {
 
 		const response = await fetch("https://bayarno.vercel.app/api/province");
 		if (response.ok) {
-			console.log("ok");
-			// nProgress.done();
+			// console.log("ok");
+			nProgress.done();
 		} else {
 			nProgress.done();
 			// console.log("not ok");
