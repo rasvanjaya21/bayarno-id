@@ -119,7 +119,7 @@ export default function Check() {
 	async function getCity() {
 		nProgress.start();
 
-		const response = await fetch("http://localhost:3000/api/city"  || "https://bayarno.vercel.app/api/city");
+		const response = await fetch("https://bayarno.vercel.app/api/city");
 		if (response.ok) {
 			// console.log("ok");
 			nProgress.done();
@@ -140,7 +140,7 @@ export default function Check() {
 	async function getProvince() {
 		nProgress.start();
 
-		const response = await fetch("http://localhost:3000/api/province" || "https://bayarno.vercel.app/api/province");
+		const response = await fetch("https://bayarno.vercel.app/api/province");
 		if (response.ok) {
 			console.log("ok");
 			// nProgress.done();
@@ -380,7 +380,6 @@ export default function Check() {
 										<button
 											type="submit"
 											className="w-full bg-primary-600 p-2 rounded-lg text-white"
-											// href="https://api.telegram.org/bot1656411725:AAH5KeZ0RN1udWK_Bduf7gNfUNbqtr7JD2A/sendMessage?chat_id=938738771&text=Hello%20from%20your%20new%20bot"
 											onClick={(event) => {
 												getCity();
 											}}
@@ -393,7 +392,6 @@ export default function Check() {
 										<button
 											type="submit"
 											className="w-full bg-primary-600 p-2 rounded-lg text-white"
-											// href="https://api.telegram.org/bot1656411725:AAH5KeZ0RN1udWK_Bduf7gNfUNbqtr7JD2A/sendMessage?chat_id=938738771&text=Hello%20from%20your%20new%20bot"
 											onClick={(event) => {
 												getProvince();
 											}}
@@ -525,9 +523,6 @@ export default function Check() {
 }
 
 // export async function getStaticProps() {
-
-// 	// const botToken = process.env.TELEGRAM_BOT_TOKEN;
-// 	// const clientId = process.env.TELEGRAM_CLIENT_ID;
 
 // 	// return {
 // 	// 	props: {
