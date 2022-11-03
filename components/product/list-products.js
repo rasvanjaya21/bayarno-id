@@ -30,7 +30,7 @@ const people = [
 
 export default function ListProducts( { label, data } ) {
 
-	console.log( data );
+	// console.log( data );
 	const [selected, setSelected] = useState(people[0]);
 	const [query, setQuery] = useState("");
 

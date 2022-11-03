@@ -25,7 +25,7 @@ export default function TabGroup() {
 				cost: "Rp. 11.000",
 			},
 		],
-		"POS Indonesia": [
+		"POS": [
 			{
 				id: 1,
 				title: "Pos Reguler : Regular Service",

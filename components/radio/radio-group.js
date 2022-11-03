@@ -42,7 +42,7 @@ export default function RadioGroupComponent( { variant }) {
 					value={selected}
 					onChange={(event) => {
 						setSelected(event);
-						console.log(event.name + " " + event.description);
+						// console.log(event.name + " " + event.description);
 					}}
 				>
 					{/* <RadioGroup.Label className="sr-only">Server size</RadioGroup.Label> */}

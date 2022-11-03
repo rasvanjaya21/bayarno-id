@@ -15,8 +15,62 @@ import { Router } from "next/router";
 import nProgress from "nprogress";
 import ReCAPTCHA from "react-google-recaptcha";
 import Script from "next/script";
+import SendMessage from "../libs/send-message";
+import axios from "axios";
 
-export default function Check({ dataProvince, dataCity, dataCost }) {
+export default function Check() {
+
+	// SendMessage("test");
+
+
+	// console.log(clientId);
+
+	// async function hey() {
+		//base
+		// base
+
+		// get all province
+		// const resProvince = await fetch(baseUrl + `/province`, {
+		// 	method: "GET",
+		// 	headers: { key },
+		// });
+		// const dataProvince = await resProvince.json();
+		// const province = dataProvince.rajaongkir.results;
+
+		// try {
+		// 	JSON.parse(province);
+		// } catch (error) {
+		// 	console.log("Error parsing JSON:", error, province);
+		// }
+
+
+		// get all city
+		// const resCity = await fetch(baseUrl + `/city`, {
+		// 	method: "GET",
+		// 	headers: { key },
+		// });
+		// const dataCity = await resCity.json();
+
+		// // get all cost
+		// const resCost = await fetch(baseUrl + `/cost`, {
+		// 	method: "POST",
+		// 	headers: { key, "content-type": "application/x-www-form-urlencoded" },
+		// 	body: new URLSearchParams({
+		// 		origin: "501",
+		// 		destination: "114",
+		// 		weight: 1700,
+		// 		courier: "tiki",
+		// 	}),
+		// 	form: { URLSearchParams },
+		// });
+
+		// const dataCost = await resCost.json();
+		// console.log(dataCost);
+	// }
+	// hey();
+
+	// console.log(dataProvince);
+	// console.log(clientId);
 	// console.log(dataProvince);
 	// console.log(dataCity);
 	// console.log(dataCost.rajaongkir.results[0].costs.map((cost) => cost.cost[0]));
@@ -49,20 +103,59 @@ export default function Check({ dataProvince, dataCity, dataCost }) {
 
 	const [pageState, setPageState] = React.useState();
 	const [endPoint, setEndPoint] = React.useState(`/province`);
+	const [filterCity, setFilterCity] = React.useState("");
 
 	const TEST_SITE_KEY = "6LeE8M8iAAAAAMz7cfo_1e7kc00DreSa6Ly8Jg-u";
 
 	function onChange(value) {
-		console.log("Captcha value:", value);
+		// console.log("Captcha value:", value);
 	}
 
+	const [dynamic, setDynamic] = React.useState("GET");
 	React.useEffect(() => {
-		// fetch(endPoint)
-		// 	.then((res) => res.json())	
-		// 	.then((data) => {
-		// 		setPageState(data);
-		// 	});
-	}, [endPoint]);
+			getCity();
+	}, []);
+
+	async function getCity() {
+		nProgress.start();
+
+		const response = await fetch("http://localhost:3000/api/city"  || "https://bayarno.vercel.app/api/city");
+		if (response.ok) {
+			// console.log("ok");
+			nProgress.done();
+		} else {
+			nProgress.done();
+			// console.log("not ok");
+		}
+
+		const data = await response.json();
+		const randomNumber = Math.floor(Math.random() * 500) + 1;
+
+		alert(data.rajaongkir.results[randomNumber].city_name);
+
+		// alert(data[0].results);
+	}
+
+
+	async function getProvince() {
+		nProgress.start();
+
+		const response = await fetch("http://localhost:3000/api/province" || "https://bayarno.vercel.app/api/province");
+		if (response.ok) {
+			console.log("ok");
+			// nProgress.done();
+		} else {
+			nProgress.done();
+			// console.log("not ok");
+		}
+
+		const data = await response.json();
+
+		const randomNumber = Math.floor(Math.random() * 33) + 1;
+		alert(data.rajaongkir.results[randomNumber].province);
+
+		// alert(data);
+	}
 
 	return (
 		<>
@@ -103,7 +196,7 @@ export default function Check({ dataProvince, dataCity, dataCost }) {
 									<div className="flex flex-shrink-0 flex-grow items-center lg:flex-grow-0">
 										<div className="flex w-full items-center justify-between">
 											<Link href="/">
-												<Logo/>
+												<Logo />
 											</Link>
 											<div className="-mr-2 flex items-center md:hidden">
 												<Popover.Button className="inline-flex items-center justify-center rounded-md  p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500">
@@ -173,7 +266,7 @@ export default function Check({ dataProvince, dataCity, dataCost }) {
 												{"Pilih alamat Provinsi dan Kota asal pengiriman anda"}
 											</div>
 											<div className="space-y-4">
-												<ListProducts label="Province" data={dataProvince} />
+												<ListProducts label="Province" />
 												<ListProducts label="Kota" />
 											</div>
 										</div>
@@ -282,20 +375,31 @@ export default function Check({ dataProvince, dataCity, dataCost }) {
 												<span className="text-green-500 font-bold"> VALID</span>
 											</div>
 										</div>
-										<div className="lg:w-4/8 flex-auto p-6 pt-0">
-											<button
-												className="w-full bg-primary-600 p-2 rounded-lg text-white"
-												onClick={(event) => {
-													// setShowModal(true);
-													// Router.events(event);
-													nProgress.start();
+									</div>
+									<div className="lg:w-4/8 flex-auto p-6 pt-0">
+										<button
+											type="submit"
+											className="w-full bg-primary-600 p-2 rounded-lg text-white"
+											// href="https://api.telegram.org/bot1656411725:AAH5KeZ0RN1udWK_Bduf7gNfUNbqtr7JD2A/sendMessage?chat_id=938738771&text=Hello%20from%20your%20new%20bot"
+											onClick={(event) => {
+												getCity();
+											}}
+										>
+											Check City
+										</button>
+									</div>
 
-													// Router.events.on("onClick", nProgress.start);
-												}}
-											>
-												Calculate Postage
-											</button>
-										</div>
+									<div className="lg:w-4/8 flex-auto p-6 pt-0">
+										<button
+											type="submit"
+											className="w-full bg-primary-600 p-2 rounded-lg text-white"
+											// href="https://api.telegram.org/bot1656411725:AAH5KeZ0RN1udWK_Bduf7gNfUNbqtr7JD2A/sendMessage?chat_id=938738771&text=Hello%20from%20your%20new%20bot"
+											onClick={(event) => {
+												getProvince();
+											}}
+										>
+											Check Province
+										</button>
 									</div>
 									{/* <div className="flex lg:w-4/8  pt-0 p-6 pb-4 rounded-xl text-end items-center">
 										<div className="text-md text-black">
@@ -420,7 +524,18 @@ export default function Check({ dataProvince, dataCity, dataCost }) {
 	);
 }
 
-// export async function getServerSideProps() {
+// export async function getStaticProps() {
+
+// 	// const botToken = process.env.TELEGRAM_BOT_TOKEN;
+// 	// const clientId = process.env.TELEGRAM_CLIENT_ID;
+
+// 	// return {
+// 	// 	props: {
+// 	// 		botToken,
+// 	// 		clientId,
+// 	// 	},
+// 	// };
+
 // 	// base
 // 	const baseUrl = process.env.RAJAONGKIR_API_URL;
 // 	const key = process.env.RAJAONGKIR_API_KEY;
