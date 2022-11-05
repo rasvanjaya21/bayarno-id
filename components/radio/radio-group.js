@@ -4,12 +4,23 @@ import { RadioGroup } from "@headlessui/react";
 const products = [
 	{
 		name: "Surya 12",
-		description: "Rp. 22.500",
+		description: "Rp. 22.500 | tersedia 2 variant",
 	},
 	{
 		name: "Juara",
 		description: "Rp. 14.000",
 	}
+];
+
+const variasi = [
+	{
+		name: "Kretek",
+		description: "Rp. 14.500",
+	},
+	{
+		name: "Filter",
+		description: "Rp. 24.000",
+	},
 ];
 
 const couriers = [
@@ -29,18 +40,41 @@ const couriers = [
 	},
 ];
 
-export default function RadioGroupComponent( { variant }) {
+const needInput = [
+	{
+		name: "Anda Belum Memilih Produk",
+		description: "Silahkan pilih produk terlebih dahulu untuk melihat variant yang tersedia dan melanjutkan ke proses berikutnya",
+	},
+];
 
-	const pickedVariant = variant === "products" ? products : couriers;
+const nullVariant = [
+	{
+		name: "Produk Belum Teresedia",
+	}
+]
+
+export default function RadioGroupComponent({ variant, onChange }) {
+	const pickedVariant =
+		variant === "products"
+			? products
+			: variant === "variasi"
+			? variasi
+			: variant === "Juara"
+			? variasi
+			: variant === ""
+			? needInput
+			: nullVariant;
 	const [selected, setSelected] = useState(pickedVariant[0]);
-	
+
 	return (
 		<div className="flex w-full">
 			<div className="w-full">
 				<RadioGroup
-				className="space-x-4"
+					className="space-x-4"
 					value={selected}
 					onChange={(event) => {
+						console.log(event.name);
+						onChange(event.name);
 						setSelected(event);
 						// console.log(event.name + " " + event.description);
 					}}
@@ -52,17 +86,9 @@ export default function RadioGroupComponent( { variant }) {
 								key={pickedVariant.name}
 								value={pickedVariant}
 								className={({ active, checked }) =>
-									`${
-										active
-											? ""
-											: ""
-									}
-                  ${
-										checked
-											? "bg-primary-600 text-white"
-											: "bg-white"
-									}
-                    relative flex cursor-pointer rounded-lg px-5 py-3.5 shadow-md focus:outline-none`
+									`${active ? "" : ""}
+                  ${checked ? "bg-primary-600 text-white" : "bg-white"}
+                    relative flex cursor-pointer rounded-lg px-5 py-3.5 shadow-primary focus:outline-none`
 								}
 							>
 								{({ active, checked }) => (
@@ -84,7 +110,7 @@ export default function RadioGroupComponent( { variant }) {
 															checked ? "text-white" : "text-gray-500"
 														} text-xs`}
 													>
-														<span>
+														<span className="text-justify">
 															{pickedVariant.description}
 														</span>
 													</RadioGroup.Description>

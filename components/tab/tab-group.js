@@ -64,9 +64,9 @@ export default function TabGroup() {
 	});
 
 	return (
-		<div className="w-full">
+		<div className="w-full space-y-4">
 			<Tab.Group>
-				<Tab.List className="flex space-x-1 rounded-xl bg-white p-[4px]">
+				<Tab.List className="flex space-x-1 rounded-xl bg-white p-[4px] shadow-primary">
 					{Object.keys(categories).map((category) => (
 						<Tab
 							key={category}
@@ -85,7 +85,7 @@ export default function TabGroup() {
 					{Object.values(categories).map((posts, idx) => (
 						<Tab.Panel
 							key={idx}
-							className={classNames("rounded-xl bg-white p-3 py-1 shadow-lg")}
+							className={classNames("rounded-xl bg-white p-3 py-1 shadow-primary")}
 						>
 							<ul>
 								{posts.map((post) => (

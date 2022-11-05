@@ -87,7 +87,7 @@ export default function Changelogs() {
 											</div>
 										</div>
 									</div>
-									<div className="hidden md:ml-10 md:block md:space-x-8 md:pr-4">
+									<div className="hidden md:ml-10 md:block md:space-x-8">
 										{navigation.map((item) => (
 											<Link
 												key={item.name}
