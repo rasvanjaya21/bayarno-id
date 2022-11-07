@@ -42,7 +42,7 @@ import {
 	XCircleIcon,
 } from "@heroicons/react/20/solid";
 
-import CheckIcon from "../components/svg/check";
+import CheckIcon from "../components/svg/check-icon";
 import html2canvas from "html2canvas";
 
 export default function Checkout({ dataProducts }) {
@@ -543,7 +543,7 @@ export default function Checkout({ dataProducts }) {
 																		<div className="text-xs absolute inset-y-0 p-3 m-[3px] rounded-tl-lg rounded-bl-lg text-white flex items-center  bg-primary-600 w-fit">
 																			Kuantitas
 																		</div>
-																		<div className="flex -m-5 pl-[105px] items-center h-10 text-md">
+																		<div className="flex -m-5 pl-[105px] items-center h-10 text-md select-none">
 																			{pickedQuantityProduct} bungkus
 																		</div>
 
