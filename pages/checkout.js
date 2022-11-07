@@ -85,7 +85,7 @@ export default function Checkout({ dataProducts }) {
 	const [processState, setProcessState] = useState("products");
 
 	const [pickedProduct, setPickedProduct] = useState("");
-	const [selectedProduct, setSelectedProduct] = useState();
+	const [selectedProduct, setSelectedProduct] = useState("");
 
 	const [pickedVariantProduct, setPickedVariantProduct] = useState("");
 
@@ -125,47 +125,39 @@ export default function Checkout({ dataProducts }) {
 		} else {
 			setIsScrolled(false);
 		}
-	}, [scrollPosition, isScrolled, processState]);
-
+	}, [scrollPosition, isScrolled]);
+	
 	useEffect(() => {
-		if (processState) {
-			console.log("loaded");
-			nProgress.done();
-		} else {
-			console.log("loading");
-			nProgress.done();
-		}
-		// getCity();
-	}, [processState]);
+			
+	}, []);
 
 	async function getCity() {
+
 		// nProgress.start();
-
-		const baseUrl = window.location.origin;
-
-		const response = await fetch(`${baseUrl}/api/city`, {
+		
+		const response = await fetch(`https://bayarno.vercel.app/api/city`, {
 			method: "GET",
 			headers: {
 				keys: "bayarno.id",
 			},
 		});
 
-		if (response.ok) {
-			console.log("ok");
-			nProgress.done();
-		} else {
-			nProgress.done();
-			console.log("not ok");
-		}
+		nProgress.done();
+		
+		// if (response.ok) {
+		// 	// nProgress.done();
+		// 	console.log("ok");
+		// 	nProgress.done();
+		// } else {
+		// 	nProgress.done();
+		// 	console.log("not ok");
+		// }
 
 		const data = await response.json();
 
-		console.log(data);
 		const randomNumber = Math.floor(Math.random() * 500) + 1;
 
 		alert(data.rajaongkir.results[randomNumber].city_name);
-
-		// alert(data[0].results);
 	}
 
 	async function getProvince() {
@@ -782,6 +774,7 @@ export default function Checkout({ dataProducts }) {
 																			event.preventDefault();
 																			setProcessState("address");
 																			getCity();
+																			nProgress.start();
 																		}}
 																	>
 																		Lanjutkan Proses
@@ -975,12 +968,6 @@ export default function Checkout({ dataProducts }) {
 											}`}
 											onClick={(event) => {
 												setProcessState("products");
-
-												if (processState === "products") {
-													nProgress.done();
-												} else {
-													nProgress.start();
-												}
 											}}
 										>
 											<div className="flex place-content-center">
@@ -1010,11 +997,6 @@ export default function Checkout({ dataProducts }) {
 											}`}
 											onClick={(event) => {
 												setProcessState("address");
-												if (processState === "address") {
-													nProgress.done();
-												} else {
-													nProgress.start();
-												}
 											}}
 										>
 											<div className="flex place-content-center">
@@ -1044,11 +1026,6 @@ export default function Checkout({ dataProducts }) {
 											}`}
 											onClick={(event) => {
 												setProcessState("postage");
-												if (processState === "postage") {
-													nProgress.done();
-												} else {
-													nProgress.start();
-												}
 											}}
 										>
 											<div className="flex place-content-center">
@@ -1078,12 +1055,6 @@ export default function Checkout({ dataProducts }) {
 											}`}
 											onClick={(event) => {
 												setProcessState("order");
-												if (processState === "order") {
-													nProgress.done();
-												} else {
-													// alert("Order");
-													nProgress.start();
-												}
 											}}
 										>
 											<div className="flex place-content-center">
@@ -1206,7 +1177,7 @@ Calculate Postage
 // }
 
 export async function getServerSideProps() {
-	const resProducts = await fetch(`http://localhost:3000/api/products`, {
+	const resProducts = await fetch(`https://bayarno.vercel.app/api/products`, {
 		headers: {
 			keys: "bayarno.id",
 		},
