@@ -46,9 +46,7 @@ export default function RadioGroupComponent({ option, onChange }) {
 			? needInput
 			: nullOption;
 
-	const [selected, setSelected] = useState();
-
-	console.log(pickedOption);
+	const [selected, setSelected] = useState("");
 
 	return (
 		<div className="flex w-full">
