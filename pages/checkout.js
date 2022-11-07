@@ -1,15 +1,17 @@
 import Head from "next/head";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Fragment } from "react";
-import { Popover, Transition } from "@headlessui/react";
+import { Popover, RadioGroup, Transition } from "@headlessui/react";
 import {
 	Bars3Icon,
+	ShoppingCartIcon,
 	BookmarkIcon,
 	CalculatorIcon,
 	HeartIcon,
 	RocketLaunchIcon,
 	ShoppingBagIcon,
 	XMarkIcon,
+	TagIcon,
 } from "@heroicons/react/24/outline";
 import DeliveryAnimation from "../components/delivery/delivery-animation";
 import PatternAnimation from "../components/pattern/pattern-animation";
@@ -24,11 +26,26 @@ import ReCAPTCHA from "react-google-recaptcha";
 import Script from "next/script";
 import SendMessage from "../libs/send-message";
 import axios from "axios";
-import { ShoppingCartIcon } from "@heroicons/react/20/solid";
 import InputAddress from "../components/input/input-address";
 import Image from "next/image";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay } from "swiper";
 
-export default function Checkout() {
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/effect-cards";
+import { EffectCards } from "swiper";
+import {
+	CreditCardIcon,
+	MinusIcon,
+	PlusIcon,
+	XCircleIcon,
+} from "@heroicons/react/20/solid";
+
+import CheckIcon from "../components/svg/check";
+import html2canvas from "html2canvas";
+
+export default function Checkout({ dataProducts }) {
 	const navigation = [
 		{
 			name: "Home",
@@ -56,68 +73,97 @@ export default function Checkout() {
 		},
 	];
 
-	const [pageState, setPageState] = React.useState();
-	const [endPoint, setEndPoint] = React.useState(`/province`);
-	const [filterCity, setFilterCity] = React.useState("");
+	const [pageState, setPageState] = useState();
+	const [endPoint, setEndPoint] = useState(`/province`);
+	const [filterCity, setFilterCity] = useState("");
 
-	const [scrollPosition, setScrollPosition] = React.useState(0);
-	const [isScrolled, setIsScrolled] = React.useState(false);
+	const [scrollPosition, setScrollPosition] = useState(0);
+	const [isScrolled, setIsScrolled] = useState(false);
 
-	const [isNavOpen, setIsNavOpen] = React.useState(false);
+	const [isNavOpen, setIsNavOpen] = useState(false);
 
-	const [processState, setProcessState] = React.useState("products");
+	const [processState, setProcessState] = useState("products");
 
-	const [pickedProduct, setPickedProduct] = React.useState("");
+	const [pickedProduct, setPickedProduct] = useState("");
+	const [selectedProduct, setSelectedProduct] = useState();
 
-	const [pickedVariantProduct, setPickedVariantProduct] = React.useState("");
+	const [pickedVariantProduct, setPickedVariantProduct] = useState("");
 
-	// const [fadeUp, setFadeUp] = React.useState("block pt-0");
+	const [pickedQuantityProduct, setPickedQuantityProduct] = useState(1);
 
-	const handleScroll = () => {
-		const position = window.pageYOffset;
-		setScrollPosition(position);
-	};
+	const [totalProductCost, setTotalProductCost] = useState(0);
+
+	const timestampProduct = Date.now(); // This would be the timestamp you want to format
 
 	const TEST_SITE_KEY = "6LeE8M8iAAAAAMz7cfo_1e7kc00DreSa6Ly8Jg-u";
+
+	function saveAsImage(uri, filename) {
+		const link = document.createElement("a");
+
+		link.href = uri;
+		link.download = filename;
+
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+	}
+
+	function handleScroll() {
+		const position = window.pageYOffset;
+		setScrollPosition(position);
+	}
 
 	function onChange(value) {
 		// console.log("Captcha value:", value);
 	}
 
-	React.useEffect(() => {
+	useEffect(() => {
 		window.addEventListener("scroll", handleScroll, { passive: true });
-
-		if (processState) {
-			nProgress.done();
-		} else {
-			console.log("loading");
-			nProgress.done();
-		}
 
 		if (scrollPosition > 5) {
 			setIsScrolled(true);
 		} else {
 			setIsScrolled(false);
 		}
-		// getCity();
 	}, [scrollPosition, isScrolled, processState]);
 
-	async function getCity() {
-		nProgress.start();
+	useEffect(() => {
+		if (processState) {
+			console.log("loaded");
+			nProgress.done();
+		} else {
+			console.log("loading");
+			nProgress.done();
+		}
+		// getCity();
+	}, [processState]);
 
-		const response = await fetch("https://bayarno.vercel.app/api/city");
+	async function getCity() {
+		// nProgress.start();
+
+		const baseUrl = window.location.origin;
+
+		const response = await fetch(`${baseUrl}/api/city`, {
+			method: "GET",
+			headers: {
+				keys: "bayarno.id",
+			},
+		});
+
 		if (response.ok) {
-			// console.log("ok");
+			console.log("ok");
 			nProgress.done();
 		} else {
 			nProgress.done();
-			// console.log("not ok");
+			console.log("not ok");
 		}
 
 		const data = await response.json();
+
+		console.log(data);
 		const randomNumber = Math.floor(Math.random() * 500) + 1;
 
-		// alert(data.rajaongkir.results[randomNumber].city_name);
+		alert(data.rajaongkir.results[randomNumber].city_name);
 
 		// alert(data[0].results);
 	}
@@ -264,7 +310,7 @@ export default function Checkout() {
 							<div className="lg:flex-row w-12/12 w-full">
 								{processState === "products" ? (
 									<>
-										<div className="space-y-4">
+										<div className="space-y-4 pb-32 md:pb-12">
 											<div className="flex-row w-12/12  pt-4 p-6 bg-blue-50 bg-opacity-90 rounded-xl">
 												<div className="w-12/12">
 													<div className="text-md text-primary-600	">
@@ -274,205 +320,488 @@ export default function Checkout() {
 														Daftar produk yang kami tawarkan
 													</div>
 												</div>
-												<div className="flex flex-col sm:flex-row w-12/12 space-x-0 space-y-5 lg:space-y-0 items-center lg:space-x-3">
-													<div className="flex flex-col lg:w-4/12">
+												<div className="flex flex-col sm:flex-row w-12/12 space-x-0 sm:space-x-2 lg:space-x-3">
+													<div className="hidden sm:flex flex-col lg:w-4/12">
 														<div className="bg-white rounded-lg">
 															<Image
-																className="rounded-lg"
+																className="rounded-lg hover:shadow-primary hover:transition-all duration-300"
 																src="/first-product-preview.png"
 																width={314}
 																height={384}
 																alt="Preview Product"
 																layout="cover"
-																objectFit="auto"
+																priority={true}
 															/>
 														</div>
 													</div>
 
-													<div className="flex flex-col lg:w-4/12">
+													<div className="hidden sm:flex flex-col lg:w-4/12">
 														<div className="bg-white rounded-lg">
 															<Image
-																className="rounded-lg"
+																className="rounded-lg hover:shadow-primary hover:transition-all duration-300"
 																src="/second-product-preview.png"
 																width={314}
 																height={384}
 																alt="Preview Product"
 																layout="cover"
-																objectFit="contain"
+																priority={true}
 															/>
 														</div>
 													</div>
 
-													<div className="flex flex-col lg:w-4/12">
+													<div className="hidden sm:flex flex-col lg:w-4/12">
 														<div className="bg-white rounded-lg">
 															<Image
-																className="rounded-lg"
+																className="rounded-lg hover:shadow-primary hover:transition-all duration-300"
 																src="/third-product-preview.png"
 																width={314}
 																height={384}
 																alt="Preview Product"
 																layout="cover"
-																objectFit="contain"
+																priority={true}
 															/>
 														</div>
 													</div>
 
-													<div className="flex flex-col lg:w-4/12">
+													<div className="hidden sm:flex flex-col lg:w-4/12">
 														<div className="bg-white rounded-lg">
 															<Image
-																className="rounded-lg"
+																className="rounded-lg hover:shadow-primary hover:transition-all duration-300"
 																src="/fourth-product-preview.png"
 																width={314}
 																height={384}
 																alt="Preview Product"
 																layout="cover"
-																objectFit="contain"
+																priority={true}
 															/>
 														</div>
 													</div>
-												</div>
-												<div className="border-t-2 my-4 border-dashed">
-													{/* {"# Tujuan Pengiriman"} */}
+													<div className="flex flex-col lg:w-4/12 sm:hidden rounded-xl shadow-primary">
+														<Swiper
+															className="rounded-xl"
+															spaceBetween={30}
+															autoplay={{
+																delay: 2500,
+																disableOnInteraction: false,
+															}}
+															modules={[Autoplay]}
+														>
+															<SwiperSlide className="rounded-xl"></SwiperSlide>
+															<SwiperSlide className="rounded-xl"></SwiperSlide>
+															<SwiperSlide className="rounded-xl"></SwiperSlide>
+															<SwiperSlide className="rounded-xl"></SwiperSlide>
+														</Swiper>
+													</div>
 												</div>
 											</div>
-											<div className="flex">
-												<div className="flex flex-col bg-red-200 w-4/12">
-													hey
-												</div>
 
-												<div className="flex flex-col bg-red-200 w-4/12">
-													hey
+											<div className="flex-row w-12/12  pt-4 p-6 bg-blue-50 bg-opacity-90 rounded-xl">
+												<div className="w-12/12">
+													<div className="text-md text-primary-600	">
+														# Pilih Produk
+													</div>
+													<div className="text-xs mb-4 text-gray-500">
+														Tentukan produk yang tersedia yang ingin kamu beli
+													</div>
+													<div className="space-y-4">
+														{/* <RadioGroupcomponent
+															value={pickedProduct}
+															option="product"
+															onChange={(event) => {
+																setPickedProduct(event);
+															}}
+														/> */}
+														<div className="flex w-full">
+															<div className="w-full">
+																<RadioGroup
+																	className="space-x-4"
+																	value={selectedProduct}
+																	onChange={(event) => {
+																		setSelectedProduct(event);
+																		setPickedProduct(event);
+																	}}
+																>
+																	<div className="space-y-4">
+																		{dataProducts.product.map((product) => (
+																			<RadioGroup.Option
+																				key={product.name}
+																				value={product}
+																				className={({ active, checked }) =>
+																					`${active ? "" : ""}
+																					 ${checked ? "bg-primary-600 text-white" : "bg-white"} relative flex cursor-pointer rounded-lg px-5 py-3.5 shadow-primary focus:outline-none`
+																				}
+																			>
+																				{({ active, checked }) => (
+																					
+																						<div className="flex w-full items-center justify-between">
+																							<div className="flex items-center">
+																								<div className="text-sm">
+																									<p
+																										className={`font-medium  ${
+																											checked
+																												? "text-white"
+																												: "text-gray-900"
+																										}`}
+																									>
+																										{product.name}
+																									</p>
+																									<span
+																										className={`inline ${
+																											checked
+																												? "text-white"
+																												: "text-gray-500"
+																										} text-xs`}
+																									>
+																										<span className="text-justify">
+																											{typeof product.description ===
+																											"number"
+																												? `Rp. ${product.description}.000`
+																												: product.description}
+																										</span>
+																									</span>
+																								</div>
+																							</div>
+																							{checked && (
+																								<CheckIcon/>
+																							)}
+																						</div>
+																					
+																				)}
+																			</RadioGroup.Option>
+																		))}
+																	</div>
+																</RadioGroup>
+															</div>
+														</div>
+													</div>
 												</div>
+												<div className="border-t-2 my-6 border-dashed"></div>
+												<div className="w-12/12">
+													<div className="text-md text-primary-600	">
+														# Pilih Variant
+													</div>
+													<div className="text-xs mb-4 text-gray-500">
+														Tentukan variant yang tersedia yang ingin kamu beli
+													</div>
+													{pickedProduct === "" ? (
+														<div className="bg-red-400 rounded-lg px-5 py-3.5 shadow-primary focus:outline-none">
+															<div className="w-full">
+																<div className="text-sm font-medium text-white">
+																	<>
+																		<span className="bg-white/80 text-red-400 px-1">
+																			Anda belum memilih produk
+																		</span>
+																	</>
+																</div>
+																<div className="inline-flex text-justify text-white/50 text-xs">
+																	<>
+																		Silakan pilih produk yang tersedia terlebih
+																		dahulu untuk melanjutkan variant produk
+																	</>
+																</div>
+															</div>
+														</div>
+													) : (
+														<div className="space-y-4">
+															<RadioGroupcomponent
+																option="variant"
+																value={pickedVariantProduct}
+																onChange={(event) => {
+																	setPickedVariantProduct(event);
+																	setTotalProductCost(
+																		event.description * pickedQuantityProduct
+																	);
+																}}
+															/>
+														</div>
+													)}
+												</div>
+												<div className="border-t-2 my-6 border-dashed"></div>
+												<div className="w-12/12">
+													<div className="text-md text-primary-600	">
+														# Jumlah Produk
+													</div>
+													<div className="text-xs mb-4 text-gray-500">
+														Terakhir, tentukan jumlah produk yang ingin kamu
+														beli
+													</div>
+													{pickedVariantProduct === "" ? (
+														<div className="bg-red-400 rounded-lg px-5 py-3.5 shadow-primary focus:outline-none">
+															<div className="w-full">
+																<div className="text-sm font-medium text-white">
+																	<>
+																		<span className="bg-white/80 text-red-400 px-1">
+																			Anda belum memilih variant
+																		</span>
+																	</>
+																</div>
+																<div className="inline-flex text-justify text-white/50 text-xs">
+																	<>
+																		Silakan pilih variant yang tersedia terlebih
+																		dahulu untuk memborong produk
+																	</>
+																</div>
+															</div>
+														</div>
+													) : (
+														<>
+															<div className="w-full">
+																<div className="relative">
+																	<div className="relative  py-5 text-sm w-full  overflow-hidden rounded-xl bg-white text-left shadow-primary  sm:text-sm">
+																		<div className="text-xs absolute inset-y-0 p-3 m-[3px] rounded-tl-lg rounded-bl-lg text-white flex items-center  bg-primary-600 w-fit">
+																			Kuantitas
+																		</div>
+																		<div className="flex -m-5 pl-[105px] items-center h-10 text-md">
+																			{pickedQuantityProduct} bungkus
+																		</div>
 
-												<div className="flex flex-col bg-red-200 w-4/12">
-													hey
+																		<div className="absolute inset-y-0 right-12 flex items-center ">
+																			<MinusIcon
+																				className="bg-primary-700/10 rounded p-2 h-8 w-8 text-primary cursor-pointer"
+																				aria-hidden="true"
+																				onClick={() => {
+																					if (pickedQuantityProduct > 1) {
+																						setPickedQuantityProduct(
+																							pickedQuantityProduct - 1
+																						);
+																						setTotalProductCost(
+																							totalProductCost -
+																								pickedVariantProduct.description
+																						);
+																					}
+																				}}
+																			/>
+																		</div>
+																		<div className="absolute inset-y-0 right-0 flex items-center pr-2">
+																			<PlusIcon
+																				className="bg-primary-700/10 rounded p-2 h-8 w-8 text-primary cursor-pointer"
+																				aria-hidden="true"
+																				onClick={(event) => {
+																					event;
+																					if (pickedQuantityProduct < 100) {
+																						setPickedQuantityProduct(
+																							pickedQuantityProduct + 1
+																						);
+																						setTotalProductCost(
+																							totalProductCost +
+																								pickedVariantProduct.description
+																						);
+																					}
+																				}}
+																			/>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</>
+													)}
+												</div>
+											</div>
+
+											<div className="flex-row w-12/12  pt-4 p-6 bg-blue-50 bg-opacity-90 rounded-xl">
+												<div className="w-12/12">
+													<div className="text-md text-primary-600	">
+														# Keterangan
+													</div>
+													<div className="text-xs mb-4 text-gray-500">
+														Ringkasan produk yang tersedia yang kamu beli
+													</div>
+													{pickedProduct === "" ? (
+														<div className="bg-red-400 rounded-lg px-5 py-3.5 shadow-primary focus:outline-none">
+															<div className="w-full">
+																<div className="text-sm font-medium text-white">
+																	<span className="bg-white/80 text-red-400 px-1">
+																		Invoice Produk, Variant, dan Kuantitas
+																	</span>
+
+																	<div className="border-t-2 my-3 border-dashed"></div>
+																	<div className="text-md flex justify-between ">
+																		<div>PRODUK</div>
+																		<div>NaN</div>
+																	</div>
+																	<div className="text-md flex justify-between ">
+																		<div>VARIANT</div>
+																		<div>NaN</div>
+																	</div>
+																	<div className="border-t-2 my-3 border-dashed"></div>
+
+																	<div className="text-md flex justify-between ">
+																		<div>KUANTITAS</div>
+																		<div>NaN</div>
+																	</div>
+																	<div className="text-md flex justify-between ">
+																		<div>TOTAL HARGA</div>
+																		<div>NaN</div>
+																	</div>
+																	<div className="border-t-2 my-3 border-dashed"></div>
+																</div>
+																<div className="inline-flex text-justify text-white/50 text-xs">
+																	{`Silakan pilih setidaknya produk terlebih dahulu untuk melengkapi invoice`}
+																</div>
+															</div>
+														</div>
+													) : (
+														<>
+															<div
+																id="invoice-pemilihan-produk"
+																className="bg-emerald-600 rounded-lg px-5 py-3.5 shadow-primary focus:outline-none"
+															>
+																<div className="w-full">
+																	<div className="text-sm font-medium text-white">
+																		<div className="flex justify-between uppercase text-white">
+																			Invoice Pemilihan Produk{" "}
+																			<span>
+																				<CreditCardIcon className="w-4 h-4 inline-block" />
+																			</span>
+																		</div>
+
+																		<div className="border-t-2 my-3 border-dashed"></div>
+																		<div className="text-md flex justify-between ">
+																			<div>PRODUK</div>
+																			<div>{pickedProduct.name}</div>
+																		</div>
+																		<div className="text-md flex justify-between ">
+																			<div>VARIANT</div>
+																			{pickedVariantProduct === "" ? (
+																				<div>NaN</div>
+																			) : (
+																				<div>{pickedVariantProduct.name}</div>
+																			)}
+																		</div>
+																		<div className="border-t-2 my-3 border-dashed"></div>
+
+																		<div className="text-md flex justify-between ">
+																			<div>KUANTITAS</div>
+																			<div>
+																				{pickedVariantProduct === "" ? (
+																					<div>NaN</div>
+																				) : (
+																					<div>
+																						{pickedQuantityProduct} Bungkus x{" "}
+																						Rp.{" "}
+																						{pickedVariantProduct.description}
+																						.000
+																					</div>
+																				)}
+																			</div>
+																		</div>
+																		<div className="text-md flex justify-between ">
+																			<div>TOTAL HARGA</div>
+																			{pickedVariantProduct === "" ? (
+																				<div>NaN</div>
+																			) : (
+																				(console.log(pickedVariantProduct.name),
+																				(
+																					<div>
+																						{totalProductCost > 1000 ? (
+																							<>
+																								{/* slice a number */}
+																								Rp.{" "}
+																								{totalProductCost
+																									.toString()
+																									.slice(0, -3)}
+																								.
+																								{totalProductCost
+																									.toString()
+																									.slice(-3)}
+																								.000
+																							</>
+																						) : (
+																							<>
+																								Rp. {totalProductCost}
+																								.000
+																							</>
+																						)}
+																					</div>
+																				))
+																			)}
+																		</div>
+																		<div className="border-t-2 my-3 border-dashed"></div>
+																	</div>
+																	{pickedVariantProduct === "" ? (
+																		<div className="inline-flex text-justify text-white/50 text-xs">
+																			{`NaN :  Anda telah memilih produk ${pickedProduct.name} tapi belum memilih varian produknya. Silahkan pilih varian produk terlebih dahulu.`}
+																		</div>
+																	) : (
+																		<>
+																			<div className="inline-flex text-justify text-white/50 text-xs">
+																				{`Pembelian produk ${pickedVariantProduct.name} sebanyak ${pickedQuantityProduct} bungkus siap diproses. Silakan
+																	tekan tombol "Lanjutkan Proses" untuk menuju ke
+																	halaman berikutnya / melalui tombol
+																	navigasi dibawah`}
+																			</div>
+																			<div className="border-t-2 my-3 border-dashed"></div>
+																			<div className="flex text-xs justify-between text-white/50">
+																				© 2022 by bayarno.id
+																				<span>
+																					{new Intl.DateTimeFormat("en-US", {
+																						year: "numeric",
+																						month: "2-digit",
+																						day: "2-digit",
+																						hour: "2-digit",
+																						minute: "2-digit",
+																						second: "2-digit",
+																					}).format(timestampProduct)}
+																				</span>
+																			</div>
+																		</>
+																	)}
+																</div>
+															</div>
+															{pickedVariantProduct === "" ? (
+																<></>
+															) : (
+																<>
+																	<div className="text-xs pt-6 text-gray-500">
+																		Notes : simpan invoice sebagai bukti
+																		pemilihan produk, jika dibutuhkan.{" "}
+																		<span
+																			className="text-primary cursor-pointer hover:underline"
+																			onClick={(event) => {
+																				event.preventDefault();
+																				html2canvas(
+																					document.querySelector(
+																						"#invoice-pemilihan-produk"
+																					)
+																				).then((canvas) => {
+																					saveAsImage(
+																						canvas.toDataURL(),
+																						"invoice-pemilihan-produk.png"
+																					);
+																				});
+																			}}
+																		>
+																			Download Invoice Pemilihan Produk
+																		</span>
+																	</div>
+																	<div className="border-t-2 my-6 border-dashed"></div>
+																	<button
+																		type="submit"
+																		className="w-full bg-emerald-600 shadow-primary p-2 rounded-lg text-white"
+																		onClick={(event) => {
+																			event.preventDefault();
+																			setProcessState("address");
+																			getCity();
+																		}}
+																	>
+																		Lanjutkan Proses
+																	</button>
+																</>
+															)}
+														</>
+													)}
 												</div>
 											</div>
 										</div>
 									</>
-								) : // <div
-								// 	className={`flex h-fit lg:w-12/12 lg:mr-4 space-y-4 pb-24`}
-								// >
-								// 	<div className="flex-auto sm:w-4/12 lg:w-4/8 md:w-4/12">
-								// 		<div className=" flex-row pt-4 p-6 bg-blue-50 bg-opacity-90 rounded-xl">
-								// 			<div className="text-md text-primary-600	">
-								// 				{"# Preview Produk"}
-								// 			</div>
-								// 			<div className="text-xs mb-4 text-gray-500">
-								// 				{"Daftar produk yang kami tawarkan"}
-								// 			</div>
-								// 			<div className="bg-white rounded-lg h-fit">
-								// 				<Image
-								// 					className="rounded-lg"
-								// 					src="/first-product-preview.png"
-								// 					width={314}
-								// 					height={384}
-								// 					alt="Preview Product"
-								// 					layout="cover"
-								// 					objectFit="contain"
-								// 				/>
-								// 			</div>
-
-								// 			<div className="border-t-2 my-4 border-dashed">
-								// 				{/* {"# Tujuan Pengiriman"} */}
-								// 			</div>
-								// 			<div className="text-md text-primary-600	">
-								// 				{"# Pilih Produk"}
-								// 			</div>
-								// 			<div className="text-xs mb-4 text-gray-500">
-								// 				{"Tentukan produk yang tersedia yang ingin kamu beli"}
-								// 			</div>
-								// 		</div>
-								// 	</div>
-								// 	<div className="space-y-4">
-								// 		<div className="lg:w-4/8 flex-auto pt-4 p-6 bg-blue-50 bg-opacity-90 rounded-xl">
-								// 			<div className="text-md text-primary-600	">
-								// 				{"# Pilih Produk"}
-								// 			</div>
-								// 			<div className="text-xs mb-4 text-gray-500">
-								// 				{"Tentukan produk yang tersedia yang ingin kamu beli"}
-								// 			</div>
-								// 			<div className="space-y-4">
-								// 				<RadioGroupcomponent
-								// 					variant="products"
-								// 					onChange={(event) => {
-								// 						setPickedProduct(event);
-								// 					}}
-								// 				/>
-								// 			</div>
-								// 		</div>
-								// 		<div className="lg:w-4/8 flex-auto pt-4 p-6 bg-blue-50 bg-opacity-90 rounded-xl">
-								// 			<div className="text-md text-primary-600	">
-								// 				{"# Pilih Variasi"}
-								// 			</div>
-								// 			<div className="text-xs mb-4 text-gray-500">
-								// 				{
-								// 					"Tentukan variasi yang tersedia yang ingin kamu beli"
-								// 				}
-								// 			</div>
-								// 			<div className="space-y-4">
-								// 				<RadioGroupcomponent
-								// 					variant={pickedProduct}
-								// 					onChange={(event) => {
-								// 						// alert(event)
-								// 						setPickedVariantProduct(event);
-								// 					}}
-								// 				/>
-								// 			</div>
-								// 		</div>
-								// 		<div className="lg:w-4/8 flex-auto pt-4 p-6 bg-blue-50 bg-opacity-90 rounded-xl">
-								// 			<div className="text-md text-primary-600	">
-								// 				{"# Keterangan"}
-								// 			</div>
-								// 			<div className="text-xs mb-4 text-gray-500">
-								// 				{pickedVariantProduct && pickedProduct !== "" ? (
-								// 					<>
-								// 						{`Selamat anda telah memilih produk ${pickedProduct}} dan variasi ${pickedVariantProduct} yang tersedia, silakan menekan tombol "Lanjutkan" untuk menuju ke halaman berikutnya atau melalui tombol navigasi dibawah ini`}
-								// 					</>
-								// 				) : (
-								// 					<>
-								// 						{`Silakan pilih produk dan variasi yang tersedia`}
-								// 					</>
-								// 				)}
-								// 			</div>
-								// 			<div className="space-y-4">
-								// 				<div className="lg:w-4/8 flex-auto ">
-								// 					<button
-								// 						type="submit"
-								// 						className="w-full bg-primary-600 p-2 rounded-lg text-white"
-								// 						onClick={(event) => {
-								// 							event.preventDefault();
-								// 							setProcessState("address");
-								// 						}}
-								// 					>
-								// 						Lanjutkan Proses
-								// 					</button>
-								// 				</div>
-								// 			</div>
-								// 		</div>
-								// 	</div>
-								// </div>
-								processState === "address" ? (
+								) : processState === "address" ? (
 									<>
 										<div className="lg:w-4/8 flex-auto pt-4 p-6 bg-blue-50 bg-opacity-90 rounded-xl">
 											<div className="text-md text-primary-600	">
 												{"# Alamat dan Data Pengiriman"}
 											</div>
 											<div className="text-xs mb-4 text-gray-500">
-												Hasil pengecekan ongkos kirim dari{" "}
-												<span className="font-bold text-primary-600	">
-													Gresik
-												</span>{" "}
-												ke
-												<span className="font-bold text-primary-600	">
-													{" "}
-													Jakarta
-												</span>{" "}
-												dengan berat{" "}
-												<span className="font-bold text-primary-600	">
-													1.000
-												</span>{" "}
-												gram (default)
+												Silakan isi alamat lengkap dan data pengiriman anda
 											</div>
 											<div className="space-y-4">
 												<div className="w-full ">
@@ -557,7 +886,7 @@ export default function Checkout() {
 												{"Tentukan jasa pengiriman anda yang tersedia"}
 											</div>
 											<div className="space-y-4">
-												<RadioGroupcomponent variant="couriers" />
+												<RadioGroupcomponent option="courier" />
 											</div>
 										</div>
 										<div className="lg:w-4/8 flex-auto px-6">
@@ -631,7 +960,7 @@ export default function Checkout() {
 										<div className="flex h-full items-center border-b">
 											<div className="flex-row">
 												<div className=" text-xs text-gray-500">
-													# Intruksi : Bacalah keterangan pada masing - masing
+													# Petunjuk : Bacalah keterangan pada masing - masing
 													judul
 												</div>
 											</div>
@@ -875,3 +1204,22 @@ Calculate Postage
 
 // 	return { props: { dataProvince, dataCity, dataCost } };
 // }
+
+export async function getServerSideProps() {
+	const resProducts = await fetch(`http://localhost:3000/api/products`, {
+		headers: {
+			keys: "bayarno.id",
+		},
+	});
+
+	const dataProducts = await resProducts.json();
+
+	// console.log(dataProducts);
+	// console.log(dataProducts.products.map((product) => product.variants));
+
+	return {
+		props: {
+			dataProducts,
+		},
+	};
+}

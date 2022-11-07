@@ -8,7 +8,8 @@ export default async function ProvinceHandler(req, res) {
 
 	await RunMiddleware(req, res, cors);
 
-	if (req.method === "GET") {
+	if (req.method === "GET" && req.headers["keys"] === `${process.env.BAYARNO_API_KEY}`) {
+		
 		if (query.hasOwnProperty("provinsiId") === true) {
 			endPoint = `https://api.rajaongkir.com/starter/province?key=${process.env.RAJAONGKIR_API_KEY}&id=${req.query.provinsiId}`;
 		} else {
@@ -21,5 +22,8 @@ export default async function ProvinceHandler(req, res) {
 		result.rajaongkir.status = data.rajaongkir.status;
 		result.rajaongkir.results = data.rajaongkir.results;
 		res.status(200).json(result);
+		
+	} else {
+		res.status(401).json({ message: "Method not allowed" });
 	}
 }

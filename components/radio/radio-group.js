@@ -1,42 +1,25 @@
 import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
 
-const products = [
+const product = [
 	{
-		name: "Surya 12",
-		description: "Rp. 22.500 | tersedia 2 variant",
-	},
-	{
-		name: "Juara",
-		description: "Rp. 14.000",
+		name: "Seedperapat",
+		description: "Tersedia 3 variant atau paket",
 	}
 ];
 
-const variasi = [
+const variant = [
 	{
-		name: "Kretek",
-		description: "Rp. 14.500",
+		name: "1 Box Seedperapat",
+		description: 245,
 	},
 	{
-		name: "Filter",
-		description: "Rp. 24.000",
-	},
-];
-
-const couriers = [
-	{
-		name: "JNE",
-		description:
-			"2 layanan tersedia : pengecekan  OKE (Ongkos Kirim Ekonomis) dan REG (Layanan Regular)",
+		name: "2 Box Seedperapat",
+		description: 450,
 	},
 	{
-		name: "POS Indonesia",
-		description: "1 layanan tersedia : pengecekan  POS Regular (Regular Service)",
-	},
-	{
-		name: "TIKI",
-		description:
-			"3 layanan tersedia : pengecekan  ECO (Economy Service), REG dan ONS (Over Night Service)",
+		name: "4 Box Seedperapat",
+		description: 850,
 	},
 ];
 
@@ -47,24 +30,25 @@ const needInput = [
 	},
 ];
 
-const nullVariant = [
+const nullOption = [
 	{
 		name: "Produk Belum Teresedia",
 	}
 ]
 
-export default function RadioGroupComponent({ variant, onChange }) {
-	const pickedVariant =
-		variant === "products"
-			? products
-			: variant === "variasi"
-			? variasi
-			: variant === "Juara"
-			? variasi
-			: variant === ""
+export default function RadioGroupComponent({ option, onChange }) {
+	const pickedOption =
+		option === "product"
+			? product
+			: option === "variant"
+			? variant
+			: option === ""
 			? needInput
-			: nullVariant;
-	const [selected, setSelected] = useState(pickedVariant[0]);
+			: nullOption;
+
+	const [selected, setSelected] = useState();
+
+	console.log(pickedOption);
 
 	return (
 		<div className="flex w-full">
@@ -74,17 +58,15 @@ export default function RadioGroupComponent({ variant, onChange }) {
 					value={selected}
 					onChange={(event) => {
 						console.log(event.name);
-						onChange(event.name);
 						setSelected(event);
-						// console.log(event.name + " " + event.description);
+						onChange(event);
 					}}
 				>
-					{/* <RadioGroup.Label className="sr-only">Server size</RadioGroup.Label> */}
 					<div className="space-y-4">
-						{pickedVariant.map((pickedVariant) => (
+						{pickedOption.map((pickedOption) => (
 							<RadioGroup.Option
-								key={pickedVariant.name}
-								value={pickedVariant}
+								key={pickedOption.name}
+								value={pickedOption}
 								className={({ active, checked }) =>
 									`${active ? "" : ""}
                   ${checked ? "bg-primary-600 text-white" : "bg-white"}
@@ -102,7 +84,7 @@ export default function RadioGroupComponent({ variant, onChange }) {
 															checked ? "text-white" : "text-gray-900"
 														}`}
 													>
-														{pickedVariant.name}
+														{pickedOption.name}
 													</RadioGroup.Label>
 													<RadioGroup.Description
 														as="span"
@@ -111,7 +93,11 @@ export default function RadioGroupComponent({ variant, onChange }) {
 														} text-xs`}
 													>
 														<span className="text-justify">
-															{pickedVariant.description}
+															{typeof pickedOption.description === "number" ? (
+																`Rp. ${pickedOption.description}.000`
+															) : (
+																pickedOption.description
+															)}
 														</span>
 													</RadioGroup.Description>
 												</div>

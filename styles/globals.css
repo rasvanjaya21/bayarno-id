@@ -47,3 +47,48 @@ a {
   border-radius: 10px;
   background: #103bfb;
 } */
+
+
+@media screen and (min-width: 410px) {
+  
+.swiper {
+  width: 600px;
+  height: 384px;
+}
+
+}
+
+@media screen and (max-width: 410px) {
+  
+.swiper {
+  width: 314px;
+  height: 384px;
+}
+
+}
+
+/* .swiper {
+  width: 314px;
+  height: 384px;
+} */
+
+
+
+
+
+
+.swiper-slide:nth-child(1n) {
+  background-image: url(/first-product-preview.png);
+}
+
+.swiper-slide:nth-child(2n) {
+  background-image: url(/second-product-preview.png);
+}
+
+.swiper-slide:nth-child(3n) {
+  background-image: url(/third-product-preview.png);
+}
+
+.swiper-slide:nth-child(4n) {
+  background-image: url(/fourth-product-preview.png);
+}

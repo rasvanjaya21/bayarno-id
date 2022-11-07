@@ -74,7 +74,7 @@ export default function Home() {
 					content="Website Raja Ongkir Bradeer merupakan salah satu platform untuk mengecek harga ongkos kirim pengiriman paket."
 				/>
 			</Head>
-			<div className="overflow-hidden w-screen">
+			<div className="overflow-hidden">
 				{isNavOpen ? (
 					<div
 						className={
