@@ -160,7 +160,7 @@ export default function Checkout({ dataProducts }) {
 
 	useEffect(() => {}, []);
 
-	async function geftCity() {
+	async function getCity() {
 		// nProgress.start();
 
 		const reqCity = await fetch(`https://bayarno.vercel.app/api/city`, {
