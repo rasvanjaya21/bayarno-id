@@ -1,7 +1,7 @@
 import Head from "next/head";
 import React, { useEffect, useState } from "react";
 import { Fragment } from "react";
-import { Popover, RadioGroup, Transition } from "@headlessui/react";
+import { Combobox, Dialog, Popover, RadioGroup, Transition } from "@headlessui/react";
 import {
 	Bars3Icon,
 	ShoppingCartIcon,
@@ -36,6 +36,7 @@ import "swiper/css";
 import "swiper/css/effect-cards";
 import { EffectCards } from "swiper";
 import {
+	ChevronUpDownIcon,
 	CreditCardIcon,
 	MinusIcon,
 	PlusIcon,
@@ -45,8 +46,9 @@ import {
 import CheckIcon from "../components/icon/check-icon";
 import html2canvas from "html2canvas";
 
-export default function Checkout({ dataProducts }) {
+import DialogModal from "../components/modal/dialog-modal";
 
+export default function Checkout({ dataProducts }) {
 	const navigation = [
 		{
 			name: "Home",
@@ -89,6 +91,7 @@ export default function Checkout({ dataProducts }) {
 	const [selectedProduct, setSelectedProduct] = useState("");
 
 	const [pickedVariantProduct, setPickedVariantProduct] = useState("");
+	const [selectedVariantProduct, setSelectedVariantProduct] = useState("");
 
 	const [pickedQuantityProduct, setPickedQuantityProduct] = useState(1);
 
@@ -96,6 +99,26 @@ export default function Checkout({ dataProducts }) {
 
 	const timestampProduct = Date.now(); // This would be the timestamp you want to format
 
+	const [isOpen, setIsOpen] = useState(false);
+
+	const [pickedSenderName, setPickedSenderName] = useState("");
+	const [pickedSenderWhatsApp, setPickedSenderWhatsApp] = useState("");
+	const [pickedSenderAddress, setPickedSenderAddress] = useState("");
+
+	const [dataCity, setDataCity] = useState("");
+
+	const [selectedDataCity, setSelectedDataCity] = useState(dataCity);
+	const [queryDataCity, setQueryDataCity] = useState("");
+	// const [filteredDataCity, setFilteredDataCity] = useState("");
+	const filteredDataCity =
+		queryDataCity === ""
+			? dataCity
+			: dataCity.filter((city) =>
+					city.city_name
+						.toLowerCase()
+						.replace(/\s+/g, "")
+						.includes(queryDataCity.toLowerCase().replace(/\s+/g, ""))
+			  );
 
 	function saveAsImage(uri, filename) {
 		const link = document.createElement("a");
@@ -117,6 +140,14 @@ export default function Checkout({ dataProducts }) {
 		// console.log("Captcha value:", value);
 	}
 
+	function closeModal() {
+		setIsOpen(false);
+	}
+
+	function openModal() {
+		setIsOpen(true);
+	}
+
 	useEffect(() => {
 		window.addEventListener("scroll", handleScroll, { passive: true });
 
@@ -126,16 +157,13 @@ export default function Checkout({ dataProducts }) {
 			setIsScrolled(false);
 		}
 	}, [scrollPosition, isScrolled]);
-	
-	useEffect(() => {
-			
-	}, []);
 
-	async function getCity() {
+	useEffect(() => {}, []);
 
+	async function geftCity() {
 		// nProgress.start();
-		
-		const response = await fetch(`https://bayarno.vercel.app/api/city`, {
+
+		const reqCity = await fetch(`https://bayarno.vercel.app/api/city`, {
 			method: "GET",
 			headers: {
 				keys: "bayarno.id",
@@ -144,40 +172,61 @@ export default function Checkout({ dataProducts }) {
 
 		nProgress.done();
 		
-		// if (response.ok) {
-		// 	// nProgress.done();
-		// 	console.log("ok");
-		// 	nProgress.done();
-		// } else {
-		// 	nProgress.done();
-		// 	console.log("not ok");
-		// }
+		const resCity = await reqCity.json();
 
-		const data = await response.json();
+		if (resCity.rajaongkir.status.code === 200) {
+			console.log("ok");
 
-		const randomNumber = Math.floor(Math.random() * 500) + 1;
+			setDataCity(resCity);
 
-		alert(data.rajaongkir.results[randomNumber].city_name);
-	}
+			console.log(resCity);
 
-	async function getProvince() {
-		nProgress.start();
-
-		const response = await fetch("https://bayarno.vercel.app/api/province");
-		if (response.ok) {
-			// console.log("ok");
+			// console.log(resCity.rajaongkir.status.code);
 			nProgress.done();
 		} else {
 			nProgress.done();
-			// console.log("not ok");
+			console.log("not ok");
 		}
 
-		const data = await response.json();
 
-		const randomNumber = Math.floor(Math.random() * 33) + 1;
-		// alert(data.rajaongkir.results[randomNumber].province);
+		// setFilteredDataCity(filteredDataCity);
 
-		// alert(data);
+		// setFilteredDataCity(filteredDataCity);
+
+		// const randomNumber = Math.floor(Math.random() * 500) + 1;
+
+		// alert(data.rajaongkir.results[randomNumber].name);
+	}
+
+	async function getProvince() {
+
+
+
+		const reqProvince = await fetch(`https://bayarno.vercel.app/api/province`, {
+			method: "GET",
+			headers: {
+				keys: "bayarno.id",
+			},
+		});
+
+		nProgress.done();
+
+		const resProvince = await reqProvince.json();
+
+		if (resProvince.rajaongkir.status.code === 200) {
+			console.log("ok");
+
+			setDataCity(resProvince);
+
+			console.log(resProvince);
+
+			// console.log(resProvince.rajaongkir.status.code);
+			nProgress.done();
+		} else {
+			nProgress.done();
+			console.log("not ok");
+		}
+
 	}
 
 	return (
@@ -286,14 +335,14 @@ export default function Checkout({ dataProducts }) {
 									</div>
 								</div>
 								<div className="hidden md:ml-10 md:block md:space-x-8">
-									{navigation.map((item) => (
+									{navigation.map((items) => (
 										<Link
-											key={item.name}
-											href={item.href}
-											className={`font-medium ${item.class}`}
-											onClick={item.onClick}
+											key={items.name}
+											href={items.href}
+											className={`font-medium ${items.class}`}
+											onClick={items.onClick}
 										>
-											{item.name}
+											{items.name}
 										</Link>
 									))}
 								</div>
@@ -303,6 +352,12 @@ export default function Checkout({ dataProducts }) {
 							<div className="lg:flex-row w-12/12 w-full">
 								{processState === "products" ? (
 									<>
+										<DialogModal
+											isOpen={isOpen}
+											closeModal={closeModal}
+											title={"Pemilihan Produk Gagal"}
+											description={`Harap menyetujui syarat dan ketentuan terlebih dahulu untuk melanjutkan proses pembelian.`}
+										/>
 										<div className="space-y-6 pb-32 md:pb-12">
 											<div className="flex-row w-12/12  pt-4 p-6 bg-blue-50 bg-opacity-90 rounded-xl">
 												<div className="w-12/12">
@@ -397,13 +452,6 @@ export default function Checkout({ dataProducts }) {
 															Tentukan produk yang tersedia yang ingin kamu beli
 														</div>
 														<div className="space-y-4">
-															{/* <RadioGroupcomponent
-															value={pickedProduct}
-															option="product"
-															onChange={(event) => {
-																setPickedProduct(event);
-															}}
-														/> */}
 															<div className="flex w-full">
 																<div className="w-full">
 																	<RadioGroup
@@ -499,7 +547,7 @@ export default function Checkout({ dataProducts }) {
 															</div>
 														) : (
 															<div className="space-y-4">
-																<RadioGroupcomponent
+																{/* <RadioGroupcomponent
 																	option="variant"
 																	value={pickedVariantProduct}
 																	onChange={(event) => {
@@ -509,7 +557,78 @@ export default function Checkout({ dataProducts }) {
 																		);
 																		setIsPickedProductDone(true);
 																	}}
-																/>
+																/> */}
+																<div className="flex w-full">
+																	<div className="w-full">
+																		<RadioGroup
+																			className="space-x-4"
+																			value={selectedVariantProduct}
+																			onChange={(event) => {
+																				setSelectedVariantProduct(event);
+																				setPickedVariantProduct(event);
+																				setTotalProductCost(
+																					event.price * pickedQuantityProduct
+																				);
+																				console.log(event.name);
+																			}}
+																		>
+																			<div className="space-y-4">
+																				{pickedProduct.variants.map(
+																					(variant) => (
+																						<RadioGroup.Option
+																							key={variant.name}
+																							value={variant}
+																							className={({
+																								active,
+																								checked,
+																							}) =>
+																								`${active ? "" : ""}
+																					 ${
+																							checked
+																								? "bg-primary-600 text-white"
+																								: "bg-white"
+																						} relative flex cursor-pointer rounded-lg px-5 py-3.5 shadow-primary focus:outline-none`
+																							}
+																						>
+																							{({ active, checked }) => (
+																								<div className="flex w-full items-center justify-between">
+																									<div className="flex items-center">
+																										<div className="text-sm">
+																											<p
+																												className={`font-medium  ${
+																													checked
+																														? "text-white"
+																														: "text-gray-900"
+																												}`}
+																											>
+																												{variant.name}
+																											</p>
+																											<span
+																												className={`inline ${
+																													checked
+																														? "text-white"
+																														: "text-gray-500"
+																												} text-xs`}
+																											>
+																												<span className="text-justify">
+																													{typeof variant.price ===
+																													"number"
+																														? `Rp. ${variant.price}.000`
+																														: variant.price}
+																												</span>
+																											</span>
+																										</div>
+																									</div>
+																									{checked && <CheckIcon />}
+																								</div>
+																							)}
+																						</RadioGroup.Option>
+																					)
+																				)}
+																			</div>
+																		</RadioGroup>
+																	</div>
+																</div>
 															</div>
 														)}
 													</div>
@@ -564,7 +683,7 @@ export default function Checkout({ dataProducts }) {
 																							);
 																							setTotalProductCost(
 																								totalProductCost -
-																									pickedVariantProduct.description
+																									pickedVariantProduct.price
 																							);
 																						}
 																					}}
@@ -582,7 +701,7 @@ export default function Checkout({ dataProducts }) {
 																							);
 																							setTotalProductCost(
 																								totalProductCost +
-																									pickedVariantProduct.description
+																									pickedVariantProduct.price
 																							);
 																						}
 																					}}
@@ -676,8 +795,7 @@ export default function Checkout({ dataProducts }) {
 																					) : (
 																						<div>
 																							{pickedQuantityProduct} pieces x{" "}
-																							Rp.{" "}
-																							{pickedVariantProduct.description}
+																							Rp. {pickedVariantProduct.price}
 																							.000
 																						</div>
 																					)}
@@ -793,27 +911,25 @@ export default function Checkout({ dataProducts }) {
 																				className="w-4 h-4 text-blue-600 cursor-pointer"
 																			/>
 																			<label className="ml-2 text-xs font-medium text-gray-500">
-																				Saya setuju dengan{" "}
+																				Saya menyetujui
 																				<span className="text-primary">
-																					produk dan variant yang saya pilih
+																					{" "}
+																					syarat dan ketentuan{" "}
 																				</span>
-																				.
+																				yang berlaku.
 																			</label>
 																		</div>
 																		<button
 																			type="submit"
 																			className="w-full bg-primary shadow-primary p-2 rounded-lg text-white"
 																			onClick={(event) => {
-																				event.preventDefault();
 																				if (isAgreeProduct) {
 																					setIsPickedProductDone(true);
-																					setProcessState("address");
+																					// setProcessState("address");
 																					getCity();
 																					nProgress.start();
 																				} else {
-																					alert(
-																						"Anda belum menyetujui produk yang dipilih."
-																					);
+																					openModal();
 																				}
 																			}}
 																		>
@@ -830,7 +946,270 @@ export default function Checkout({ dataProducts }) {
 									</>
 								) : processState === "address" ? (
 									<>
-										<div className="lg:w-4/8 flex-auto pt-4 p-6 bg-blue-50 bg-opacity-90 rounded-xl">
+										<div className="space-y-6 pb-32 md:pb-12">
+											<div className="lg:flex space-y-6 lg:space-y-0 lg:space-x-6 lg:w-12/12">
+												<div className="flex-row w-12/12 lg:w-6/12 pt-4 p-6 bg-blue-50 bg-opacity-90 rounded-xl">
+													<div className="w-12/12">
+														<div className="lg:w-4/8 flex-auto ">
+															<div className="text-md text-primary-600	">
+																{"# Data Diri Penerima"}
+															</div>
+															<div className="text-xs mb-4 text-gray-500">
+																{
+																	"Pilih alamat Provinsi dan Kota asal pengiriman anda"
+																}
+															</div>
+															<div className="space-y-4">
+																{/* <ListProducts label="Nama Lengkap" /> */}
+																<div className="w-full">
+																	<div className="relative">
+																		<div className="relative w-full cursor-default overflow-hidden rounded-xl bg-white text-left shadow-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
+																			<div className="text-xs absolute inset-y-0 pl-3 m-[3px] rounded-tl-lg rounded-bl-lg text-white bg-primary flex items-center  w-[115px]">
+																				Nama Lengkap
+																			</div>
+																			<input
+																				className="w-full border-none py-2 pl-[125px] pr-2 text-xs leading-5 text-gray-900 focus:ring-0 outline-none"
+																				placeholder="Kakek Merah"
+																				onChange={(event) => {
+																					setPickedSenderName(
+																						event.target.value
+																					);
+																				}}
+																			/>
+																		</div>
+																	</div>
+																</div>
+																<div className="w-full">
+																	<div className="relative">
+																		<div className="relative w-full cursor-default overflow-hidden rounded-xl bg-white text-left shadow-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
+																			<div className="text-xs absolute inset-y-0 pl-3 m-[3px] rounded-tl-lg rounded-bl-lg text-white bg-primary flex items-center  w-[115px]">
+																				Nomor WhatsApp
+																			</div>
+																			<input
+																				className="w-full border-none py-2 pl-[125px] pr-2 text-xs leading-5 text-gray-900 focus:ring-0 outline-none"
+																				placeholder="081234567890"
+																				onChange={(event) => {
+																					setPickedSenderWhatsApp(
+																						event.target.value
+																					);
+																				}}
+																			/>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+														<div className="border-t-2 my-6 border-dashed"></div>
+
+														<div className="lg:w-4/8 flex-auto">
+															<div className="text-md text-primary-600	">
+																{"# Alamat Penerima"}
+															</div>
+															<div className="text-xs mb-4 text-gray-500">
+																{
+																	"Pilih alamat Provinsi dan Kota tujuan pengiriman anda"
+																}
+															</div>
+															<div className="space-y-4">
+																<div className="w-full">
+																	<div className="relative">
+																		<div className="relative w-full cursor-default overflow-hidden rounded-xl bg-white text-left shadow-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
+																			<div className="text-xs absolute inset-y-0 pl-3 m-[3px] rounded-tl-lg rounded-bl-lg text-white bg-primary flex items-center  w-[115px]">
+																				Alamat Lengkap
+																			</div>
+																			<input
+																				className="w-full border-none py-2 pl-[125px] pr-2 text-xs leading-5 text-gray-900 focus:ring-0 outline-none"
+																				placeholder="Jalan, Kelurahan, Kecamatan, Kode Pos"
+																				onChange={(event) => {
+																					setPickedSenderAddress(
+																						event.target.value
+																					);
+																				}}
+																			/>
+																		</div>
+																	</div>
+																</div>
+																<div className="w-full">
+																	<Combobox
+																		value={selectedDataCity}
+																		onChange={setSelectedDataCity}
+																	>
+																		<div className="relative">
+																			<div className="relative w-full cursor-default overflow-hidden rounded-xl bg-white text-left shadow-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
+																				<Combobox.Input
+																					className="w-full border-none py-2 pl-[97px] pr-10 text-sm leading-5 text-gray-900 focus:ring-0 outline-none"
+																					displayValue={(items) =>
+																						items.city_name
+																					}
+																					onChange={(event) =>
+																						setQueryDataCity(event.target.value)
+																					}
+																				/>
+																				<Combobox.Button className="text-sm absolute inset-y-0 pl-3 m-[3px] rounded-tl-lg rounded-bl-lg text-white flex items-center pr-2 bg-primary-600 w-[87px]">
+																					Kota / Kab
+																					<div className="ml-auto">:</div>
+																				</Combobox.Button>
+																				<Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
+																					<ChevronUpDownIcon
+																						className="h-5 w-5 text-gray-400"
+																						aria-hidden="true"
+																					/>
+																				</Combobox.Button>
+																			</div>
+																			<Transition
+																				as={Fragment}
+																				leave="transition ease-in duration-100"
+																				leaveFrom="opacity-100"
+																				leaveTo="opacity-0"
+																				afterLeave={(event) => setQueryDataCity("")}
+																			>
+																				<Combobox.Options className="z-10 scroll-smooth absolute mt-3 max-h-[270px] w-full overflow-auto rounded-md bg-white text-base shadow-primary ring-1 ring-black ring-opacity-5  sm:text-sm">
+																					{filteredDataCity.length === 0 &&
+																					queryDataCity !== "" ? (
+																						<div className="relative cursor-default select-none py-2 px-4 text-gray-700">
+																							Data tidak ditemukan.
+																						</div>
+																					) : (
+																						filteredDataCity.map((item, index) => (
+																							<Combobox.Option
+																								key={index}
+																								value={item}
+																								className={({ active }) =>
+																									`${
+																										active
+																											? "text-white bg-primary-600"
+																											: "text-gray-900"
+																									} relative cursor-default select-none py-2 px-4 text-sm`
+																								}
+																							>
+																								{item.city_name}
+																							</Combobox.Option>
+																						))
+																					)}
+																				</Combobox.Options>
+																			</Transition>
+																		</div>
+																	</Combobox>
+																</div>
+																<ListProducts label="Kota/Kab" />
+															</div>
+														</div>
+														<div className="border-t-2 my-6 border-dashed"></div>
+
+														<div className="lg:w-4/8 flex-auto">
+															<div className="text-md text-primary-600	">
+																{"# Catatan [ Opsional ]"}
+															</div>
+															<div className="text-xs mb-4 text-gray-500">
+																{
+																	"Pilih alamat Provinsi dan Kota tujuan pengiriman anda"
+																}
+															</div>
+															<div className="space-y-4">
+																<div className="w-full">
+																	<div className="relative">
+																		<div className="relative w-full cursor-default overflow-hidden rounded-xl bg-white text-left shadow-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
+																			<div className="text-xs absolute inset-y-0 pl-3 m-[3px] rounded-tl-lg rounded-bl-lg text-white bg-primary flex items-center  w-[115px]">
+																				Catatan Penerima
+																			</div>
+																			<input
+																				className="w-full border-none py-2 pl-[125px] pr-2 text-xs leading-5 text-gray-900 focus:ring-0 outline-none"
+																				placeholder="Catatan Khusus Jika Ada"
+																				onChange={(event) => {}}
+																			/>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div className="flex-row w-12/12 lg:w-6/12 pt-4 p-6 bg-blue-50 bg-opacity-90 rounded-xl">
+													<div className="w-12/12 ">
+														<div className="text-md text-primary-600	">
+															# Keterangan
+														</div>
+														<div className="text-xs mb-4 text-gray-500">
+															Ringkasan produk yang tersedia yang kamu beli
+														</div>
+														<div
+															id="invoice-pemilihan-produk"
+															className="bg-emerald-600 rounded-lg px-5 py-3.5 shadow-primary focus:outline-none"
+														>
+															<div className="w-full">
+																<div className="text-sm font-medium text-white">
+																	<div className="flex justify-between uppercase text-white">
+																		Invoice Pemilihan Produk{" "}
+																		<span>
+																			<CreditCardIcon className="w-4 h-4 inline-block" />
+																		</span>
+																	</div>
+
+																	<div className="border-t-2 my-3 border-dashed"></div>
+																	<div className="text-md flex justify-between ">
+																		<div>PRODUK</div>
+																		<div>{pickedProduct.name}</div>
+																	</div>
+																	<div className="text-md flex justify-between ">
+																		<div>VARIANT</div>
+																		<div>NaN</div>
+																	</div>
+																	<div className="border-t-2 my-3 border-dashed"></div>
+
+																	<div className="text-md flex justify-between ">
+																		<div>KUANTITAS</div>
+																		<div>
+																			<div>NaN</div>
+																		</div>
+																	</div>
+																	<div className="text-md flex justify-between ">
+																		<div>TOTAL HARGA</div>
+																		<div>NaN</div>
+																	</div>
+																	<div className="border-t-2 my-3 border-dashed"></div>
+																</div>
+																<div className="inline-flex text-justify text-white/50 text-xs">
+																	{`Selangkah lagi, silakan pilih variant dari produk ${pickedProduct.name} untuk melengkapi invoice`}
+																</div>
+																<div className="border-t-2 my-3 border-dashed"></div>
+																<div className="flex text-xs justify-between text-white/50">
+																	© 2022 by bayarno.id
+																	<span>
+																		{Intl.DateTimeFormat("en-GB", {
+																			year: "numeric",
+																			month: "2-digit",
+																			day: "2-digit",
+																			hour: "2-digit",
+																			minute: "2-digit",
+																			second: "2-digit",
+																		}).format(timestampProduct)}
+																	</span>
+																</div>
+															</div>
+														</div>
+														<div className="border-t-2 my-6 border-dashed"></div>
+														<button
+															type="submit"
+															className="w-full bg-primary shadow-primary p-2 rounded-lg text-white"
+															onClick={(event) => {
+																event.preventDefault();
+																if (isAgreeProduct) {
+																	setIsPickedProductDone(true);
+																	// setProcessState("address");
+																	getCity();
+																	nProgress.start();
+																} else {
+																	openModal();
+																}
+															}}
+														>
+															Lanjutkan Proses
+														</button>
+													</div>
+												</div>
+											</div>
+										</div>
+										{/* <div className="lg:w-4/8 flex-auto pt-4 p-6 bg-blue-50 bg-opacity-90 rounded-xl">
 											<div className="text-md text-primary-600	">
 												{"# Alamat dan Data Pengiriman"}
 											</div>
@@ -873,7 +1252,7 @@ export default function Checkout({ dataProducts }) {
 													</div>
 												</div>
 											</div>
-										</div>
+										</div> */}
 									</>
 								) : processState === "postage" ? (
 									<div className="lg:w-8/12 bg-blue-50 bg-opacity-90 rounded-xl lg:mr-12">
@@ -1038,9 +1417,12 @@ export default function Checkout({ dataProducts }) {
 											}`}
 											onClick={(event) => {
 												if (isAgreeProduct) {
+													setIsPickedProductDone(true);
 													setProcessState("address");
+													getCity();
+													nProgress.start();
 												} else {
-													alert("Silakan selesaikan proses terlebih dahulu");
+													openModal();
 												}
 											}}
 										>
