@@ -212,6 +212,7 @@ export default function Checkout({ dataProducts }) {
 								onClick={(event) => {
 									event.preventDefault();
 									setIsNavOpen(false);
+									console.log("close nav");
 								}}
 							>
 								<XMarkIcon className="h-6 w-6" aria-hidden="true" />
@@ -275,7 +276,7 @@ export default function Checkout({ dataProducts }) {
 											<button
 												className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
 												onClick={(event) => {
-													console.log("clicked");
+													console.log("nav open");
 													setIsNavOpen(true);
 												}}
 											>
@@ -411,6 +412,7 @@ export default function Checkout({ dataProducts }) {
 																	onChange={(event) => {
 																		setSelectedProduct(event);
 																		setPickedProduct(event);
+																		console.log(event.name);
 																	}}
 																>
 																	<div className="space-y-4">
@@ -551,7 +553,8 @@ export default function Checkout({ dataProducts }) {
 																			<MinusIcon
 																				className="bg-primary-700/10 rounded p-2 h-8 w-8 text-primary cursor-pointer"
 																				aria-hidden="true"
-																				onClick={() => {
+																				onClick={(event) => {
+																					console.log("minus");
 																					if (pickedQuantityProduct > 1) {
 																						setPickedQuantityProduct(
 																							pickedQuantityProduct - 1
@@ -569,7 +572,7 @@ export default function Checkout({ dataProducts }) {
 																				className="bg-primary-700/10 rounded p-2 h-8 w-8 text-primary cursor-pointer"
 																				aria-hidden="true"
 																				onClick={(event) => {
-																					event;
+																					console.log("plus");
 																					if (pickedQuantityProduct < 100) {
 																						setPickedQuantityProduct(
 																							pickedQuantityProduct + 1
@@ -682,30 +685,27 @@ export default function Checkout({ dataProducts }) {
 																			{pickedVariantProduct === "" ? (
 																				<div>NaN</div>
 																			) : (
-																				(console.log(pickedVariantProduct.name),
-																				(
-																					<div>
-																						{totalProductCost > 1000 ? (
-																							<>
-																								{/* slice a number */}
-																								Rp.{" "}
-																								{totalProductCost
-																									.toString()
-																									.slice(0, -3)}
-																								.
-																								{totalProductCost
-																									.toString()
-																									.slice(-3)}
-																								.000
-																							</>
-																						) : (
-																							<>
-																								Rp. {totalProductCost}
-																								.000
-																							</>
-																						)}
-																					</div>
-																				))
+																				<div>
+																					{totalProductCost > 1000 ? (
+																						<>
+																							{/* slice a number */}
+																							Rp.{" "}
+																							{totalProductCost
+																								.toString()
+																								.slice(0, -3)}
+																							.
+																							{totalProductCost
+																								.toString()
+																								.slice(-3)}
+																							.000
+																						</>
+																					) : (
+																						<>
+																							Rp. {totalProductCost}
+																							.000
+																						</>
+																					)}
+																				</div>
 																			)}
 																		</div>
 																		<div className="border-t-2 my-3 border-dashed"></div>
@@ -726,7 +726,7 @@ export default function Checkout({ dataProducts }) {
 																			<div className="flex text-xs justify-between text-white/50">
 																				© 2022 by bayarno.id
 																				<span>
-																					{new Intl.DateTimeFormat("en-US", {
+																					{new Intl.DateTimeFormat("en-GB", {
 																						year: "numeric",
 																						month: "2-digit",
 																						day: "2-digit",
@@ -944,7 +944,7 @@ export default function Checkout({ dataProducts }) {
 										</div>
 									</div>
 								) : (
-									<>{console.log("error")}</>
+									<></>
 								)}
 							</div>
 							<div className="z-10 fixed w-full bottom-0 right-0 left-0 p-4 pb-0 pt-0 sm:px-14 sm:pt-0 md:px-24 md:pt-0 lg:p-10 lg:px-24 lg:pt-0 lg:pb-0 shadow-[0_0_3px_0_rgba(0,0,0,0.20)] bg-white/40 backdrop-blur-[15px]">
