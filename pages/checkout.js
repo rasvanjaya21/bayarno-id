@@ -105,20 +105,17 @@ export default function Checkout({ dataProducts }) {
 	const [pickedSenderWhatsApp, setPickedSenderWhatsApp] = useState("");
 	const [pickedSenderAddress, setPickedSenderAddress] = useState("");
 
-	const [dataCity, setDataCity] = useState("");
+	const [dataProvince, setDataProvince] = useState("");
+	const [selectedDataProvince, setSelectedDataProvince] = useState(dataProvince);
+	const [queryDataProvince, setQueryDataProvince] = useState("");
 
+	const filteredDataProvince = queryDataProvince === "" ? dataProvince : dataProvince.filter((items) => items.province.toLowerCase().includes(queryDataProvince.toLowerCase()));
+	
+	const [dataCity, setDataCity] = useState("");
 	const [selectedDataCity, setSelectedDataCity] = useState(dataCity);
 	const [queryDataCity, setQueryDataCity] = useState("");
-	// const [filteredDataCity, setFilteredDataCity] = useState("");
-	const filteredDataCity =
-		queryDataCity === ""
-			? dataCity
-			: dataCity.filter((city) =>
-					city.city_name
-						.toLowerCase()
-						.replace(/\s+/g, "")
-						.includes(queryDataCity.toLowerCase().replace(/\s+/g, ""))
-			  );
+
+	const filteredDataCity = queryDataCity === "" ? dataCity : dataCity.filter((items) => items.city_name.toLowerCase().includes(queryDataCity.toLowerCase()));
 
 	function saveAsImage(uri, filename) {
 		const link = document.createElement("a");
@@ -156,77 +153,80 @@ export default function Checkout({ dataProducts }) {
 		} else {
 			setIsScrolled(false);
 		}
-	}, [scrollPosition, isScrolled]);
+		console.log("selected data City", selectedDataProvince ? selectedDataProvince : "kosong");
+	}, [scrollPosition, isScrolled, selectedDataProvince]);
 
-	useEffect(() => {}, []);
-
-	async function getCity() {
-		// nProgress.start();
-
-		const reqCity = await fetch(`https://bayarno.vercel.app/api/city`, {
-			method: "GET",
-			headers: {
-				keys: "bayarno.id",
-			},
-		});
-
-		nProgress.done();
-		
-		const resCity = await reqCity.json();
-
-		if (resCity.rajaongkir.status.code === 200) {
-			console.log("ok");
-
-			setDataCity(resCity);
-
-			console.log(resCity);
-
-			// console.log(resCity.rajaongkir.status.code);
+	useEffect(() => {
+		if (processState === "products") {
 			nProgress.done();
-		} else {
+			window.scrollTo(0, 0);
+		} else if (processState === "address") {
 			nProgress.done();
-			console.log("not ok");
+			window.scrollTo(0, 0);
 		}
+	}, [processState]);
 
-
-		// setFilteredDataCity(filteredDataCity);
-
-		// setFilteredDataCity(filteredDataCity);
-
-		// const randomNumber = Math.floor(Math.random() * 500) + 1;
-
-		// alert(data.rajaongkir.results[randomNumber].name);
+	function getProvince() {
+		
+		if (dataProvince.length === 0) {
+			fetch("https://bayarno.vercel.app/api/province", {
+				method: "GET",
+				headers: {
+					keys: "bayarno.id",
+				},
+			})
+				.then((response) => response.json())
+				.then((data) => {
+					if (data.rajaongkir.status.code === 200) {
+						// setDataCity(data.data);
+						// nProgress.done();
+						console.log("ok");
+						setDataProvince(data.rajaongkir.results);
+						nProgress.done();
+						setProcessState("address");
+					} else {
+						nProgress.done();
+						console.log("not ok");
+					}
+				})
+				.catch((error) => console.log(error));
+		} else {
+			setProcessState("address");
+			// openModal();
+		}
 	}
 
-	async function getProvince() {
+	function getCity() {
 
+		if(dataCity.length === 0) {
 
-
-		const reqProvince = await fetch(`https://bayarno.vercel.app/api/province`, {
+		fetch("https://bayarno.vercel.app/api/city", {
 			method: "GET",
 			headers: {
 				keys: "bayarno.id",
 			},
-		});
+		})
+			.then((response) => response.json())
+			.then((data) => {
+				if (data.rajaongkir.status.code === 200) {
+					// setDataCity(data.data);
+					// nProgress.done();
+					console.log("ok");
+					setDataCity(data.rajaongkir.results);
+					nProgress.done();
+					setProcessState("address");
+				} else {
+					nProgress.done();
+					console.log("not ok");
+				}
+					
+			})
+			.catch((error) => console.log(error));
 
-		nProgress.done();
-
-		const resProvince = await reqProvince.json();
-
-		if (resProvince.rajaongkir.status.code === 200) {
-			console.log("ok");
-
-			setDataCity(resProvince);
-
-			console.log(resProvince);
-
-			// console.log(resProvince.rajaongkir.status.code);
-			nProgress.done();
 		} else {
-			nProgress.done();
-			console.log("not ok");
+			setProcessState("address");
+			// openModal();
 		}
-
 	}
 
 	return (
@@ -355,8 +355,9 @@ export default function Checkout({ dataProducts }) {
 										<DialogModal
 											isOpen={isOpen}
 											closeModal={closeModal}
-											title={"Pemilihan Produk Gagal"}
-											description={`Harap menyetujui syarat dan ketentuan terlebih dahulu untuk melanjutkan proses pembelian.`}
+											title={"Terjadi Kesalahan"}
+											firstDescription={`Sepertinya anda belum memilih produk apapun. Silahkan pilih produk terlebih dahulu.`}
+											secondDescription={`Harap menyetujui syarat dan ketentuan terlebih dahulu untuk melanjutkan proses pembelian.`}
 										/>
 										<div className="space-y-6 pb-32 md:pb-12">
 											<div className="flex-row w-12/12  pt-4 p-6 bg-blue-50 bg-opacity-90 rounded-xl">
@@ -925,9 +926,9 @@ export default function Checkout({ dataProducts }) {
 																			onClick={(event) => {
 																				if (isAgreeProduct) {
 																					setIsPickedProductDone(true);
-																					// setProcessState("address");
-																					getCity();
 																					nProgress.start();
+																					getProvince();
+																					// getCity();
 																				} else {
 																					openModal();
 																				}
@@ -968,7 +969,7 @@ export default function Checkout({ dataProducts }) {
 																				Nama Lengkap
 																			</div>
 																			<input
-																				className="w-full border-none py-2 pl-[125px] pr-2 text-xs leading-5 text-gray-900 focus:ring-0 outline-none"
+																				className="w-full border-none py-2 pl-[127px] pr-2 text-xs leading-5 text-gray-900 focus:ring-0 outline-none"
 																				placeholder="Kakek Merah"
 																				onChange={(event) => {
 																					setPickedSenderName(
@@ -986,7 +987,7 @@ export default function Checkout({ dataProducts }) {
 																				Nomor WhatsApp
 																			</div>
 																			<input
-																				className="w-full border-none py-2 pl-[125px] pr-2 text-xs leading-5 text-gray-900 focus:ring-0 outline-none"
+																				className="w-full border-none py-2 pl-[127px] pr-2 text-xs leading-5 text-gray-900 focus:ring-0 outline-none"
 																				placeholder="081234567890"
 																				onChange={(event) => {
 																					setPickedSenderWhatsApp(
@@ -1018,7 +1019,7 @@ export default function Checkout({ dataProducts }) {
 																				Alamat Lengkap
 																			</div>
 																			<input
-																				className="w-full border-none py-2 pl-[125px] pr-2 text-xs leading-5 text-gray-900 focus:ring-0 outline-none"
+																				className="w-full border-none py-2 pl-[127px] pr-2 text-xs leading-5 text-gray-900 focus:ring-0 outline-none"
 																				placeholder="Jalan, Kelurahan, Kecamatan, Kode Pos"
 																				onChange={(event) => {
 																					setPickedSenderAddress(
@@ -1029,25 +1030,29 @@ export default function Checkout({ dataProducts }) {
 																		</div>
 																	</div>
 																</div>
+
+
+
+
+
 																<div className="w-full">
 																	<Combobox
-																		value={selectedDataCity}
-																		onChange={setSelectedDataCity}
+																		value={selectedDataProvince}
+																		onChange={setSelectedDataProvince}
 																	>
 																		<div className="relative">
 																			<div className="relative w-full cursor-default overflow-hidden rounded-xl bg-white text-left shadow-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
 																				<Combobox.Input
-																					className="w-full border-none py-2 pl-[97px] pr-10 text-sm leading-5 text-gray-900 focus:ring-0 outline-none"
+																					className="w-full border-none py-2 pl-[127px] pr-2 text-sm leading-5 text-gray-900 focus:ring-0 outline-none"
 																					displayValue={(items) =>
-																						items.city_name
+																						items.province
 																					}
 																					onChange={(event) =>
-																						setQueryDataCity(event.target.value)
+																						setQueryDataProvince(event.target.value)
 																					}
 																				/>
-																				<Combobox.Button className="text-sm absolute inset-y-0 pl-3 m-[3px] rounded-tl-lg rounded-bl-lg text-white flex items-center pr-2 bg-primary-600 w-[87px]">
-																					Kota / Kab
-																					<div className="ml-auto">:</div>
+																				<Combobox.Button className="text-sm absolute inset-y-0 pl-3 m-[3px] rounded-tl-lg rounded-bl-lg text-white flex items-center pr-2 bg-primary-600  w-[115px]">
+																					Provinsi
 																				</Combobox.Button>
 																				<Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
 																					<ChevronUpDownIcon
@@ -1061,29 +1066,152 @@ export default function Checkout({ dataProducts }) {
 																				leave="transition ease-in duration-100"
 																				leaveFrom="opacity-100"
 																				leaveTo="opacity-0"
-																				afterLeave={(event) => setQueryDataCity("")}
+																				afterLeave={(event) =>
+																					setQueryDataProvince("")
+																				}
+																			>
+																				<Combobox.Options className="z-10 scroll-smooth absolute mt-3 max-h-[270px] w-full overflow-auto rounded-md bg-white text-base shadow-primary ring-1 ring-black ring-opacity-5  sm:text-sm">
+																					{filteredDataProvince.length === 0 &&
+																					queryDataProvince !== "" ? (
+																						<div className="relative cursor-default select-none py-2 px-4 text-gray-700">
+																							Data tidak ditemukan
+																						</div>
+																					) : (
+																						filteredDataProvince.map((items) => (
+																							<Combobox.Option
+																								key={items.province_id}
+																								value={items}
+																								className={({ active }) =>
+																									`relative cursor-default select-none py-2 m-3 pl-3 pr-4 ${
+																										active
+																											? "bg-primary-600 text-white rounded-md"
+																											: "text-gray-900"
+																									}`
+																								}
+																							>
+																								{({ selected, active }) => (
+																									<>
+																										<span
+																											className={`block truncate ${
+																												selected
+																													? "font-medium"
+																													: "font-normal"
+																											}`}
+																										>
+																											{items.province}
+																										</span>
+																										{selected ? (
+																											<span
+																												className={`absolute inset-y-0 right-0 flex items-center mr-2 ${
+																													active
+																														? "text-white"
+																														: "text-primary-600"
+																												}`}
+																											>
+																												<CheckIcon
+																													className="h-5 w-5"
+																													aria-hidden="true"
+																												/>
+																											</span>
+																										) : null}
+																									</>
+																								)}
+																							</Combobox.Option>
+																						))
+																					)}
+																				</Combobox.Options>
+																			</Transition>
+																		</div>
+																	</Combobox>
+																</div>
+
+
+
+
+
+
+																<div className="w-full">
+																	<Combobox
+																		value={selectedDataCity}
+																		onChange={setSelectedDataCity}
+																	>
+																		<div className="relative">
+																			<div className="relative w-full cursor-default overflow-hidden rounded-xl bg-white text-left shadow-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
+																				<Combobox.Input
+																					className="w-full border-none py-2 pl-[127px] pr-2 text-sm leading-5 text-gray-900 focus:ring-0 outline-none"
+																					displayValue={(items) =>
+																						items.city_name
+																					}
+																					onChange={(event) =>
+																						setQueryDataCity(event.target.value)
+																					}
+																				/>
+																				<Combobox.Button className="text-sm absolute inset-y-0 pl-3 m-[3px] rounded-tl-lg rounded-bl-lg text-white flex items-center pr-2 bg-primary-600  w-[115px]">
+																					Kota / Kab
+																				</Combobox.Button>
+																				<Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
+																					<ChevronUpDownIcon
+																						className="h-5 w-5 text-gray-400"
+																						aria-hidden="true"
+																					/>
+																				</Combobox.Button>
+																			</div>
+																			<Transition
+																				as={Fragment}
+																				leave="transition ease-in duration-100"
+																				leaveFrom="opacity-100"
+																				leaveTo="opacity-0"
+																				afterLeave={(event) =>
+																					setQueryDataCity("")
+																				}
 																			>
 																				<Combobox.Options className="z-10 scroll-smooth absolute mt-3 max-h-[270px] w-full overflow-auto rounded-md bg-white text-base shadow-primary ring-1 ring-black ring-opacity-5  sm:text-sm">
 																					{filteredDataCity.length === 0 &&
 																					queryDataCity !== "" ? (
 																						<div className="relative cursor-default select-none py-2 px-4 text-gray-700">
-																							Data tidak ditemukan.
+																							Data tidak ditemukan
 																						</div>
 																					) : (
 																						<></>
-																						// filteredDataCity.map((item, index) => (
+																						// filteredDataCity.map((items) => (
 																						// 	<Combobox.Option
-																						// 		key={index}
-																						// 		value={item}
+																						// 		key={items.city_id}
+																						// 		value={items}
 																						// 		className={({ active }) =>
-																						// 			`${
+																						// 			`relative cursor-default select-none py-2 m-3 pl-3 pr-4 ${
 																						// 				active
-																						// 					? "text-white bg-primary-600"
+																						// 					? "bg-primary-600 text-white rounded-md"
 																						// 					: "text-gray-900"
-																						// 			} relative cursor-default select-none py-2 px-4 text-sm`
+																						// 			}`
 																						// 		}
 																						// 	>
-																						// 		{item.city_name}
+																						// 		{({ selected, active }) => (
+																						// 			<>
+																						// 				<span
+																						// 					className={`block truncate ${
+																						// 						selected
+																						// 							? "font-medium"
+																						// 							: "font-normal"
+																						// 					}`}
+																						// 				>
+																						// 					{items.city_name}
+																						// 				</span>
+																						// 				{selected ? (
+																						// 					<span
+																						// 						className={`absolute inset-y-0 right-0 flex items-center mr-2 ${
+																						// 							active
+																						// 								? "text-white"
+																						// 								: "text-primary-600"
+																						// 						}`}
+																						// 					>
+																						// 						<CheckIcon
+																						// 							className="h-5 w-5"
+																						// 							aria-hidden="true"
+																						// 						/>
+																						// 					</span>
+																						// 				) : null}
+																						// 			</>
+																						// 		)}
 																						// 	</Combobox.Option>
 																						// ))
 																					)}
@@ -1092,7 +1220,6 @@ export default function Checkout({ dataProducts }) {
 																		</div>
 																	</Combobox>
 																</div>
-																<ListProducts label="Kota/Kab" />
 															</div>
 														</div>
 														<div className="border-t-2 my-6 border-dashed"></div>
@@ -1114,7 +1241,7 @@ export default function Checkout({ dataProducts }) {
 																				Catatan Penerima
 																			</div>
 																			<input
-																				className="w-full border-none py-2 pl-[125px] pr-2 text-xs leading-5 text-gray-900 focus:ring-0 outline-none"
+																				className="w-full border-none py-2 pl-[127px] pr-2 text-xs leading-5 text-gray-900 focus:ring-0 outline-none"
 																				placeholder="Catatan Khusus Jika Ada"
 																				onChange={(event) => {}}
 																			/>
@@ -1315,7 +1442,11 @@ export default function Checkout({ dataProducts }) {
 													: `flex-row justify-center mr-2 py-3 bg-primary-700 bg-opacity-10 rounded-xl w-3/12 cursor-pointer`
 											}`}
 											onClick={(event) => {
-												setProcessState("products");
+												if (processState !== "products") {
+													// setProcessState("order");
+													nProgress.start();
+													setProcessState("products");
+												}
 											}}
 										>
 											<div className="flex place-content-center">
@@ -1345,10 +1476,13 @@ export default function Checkout({ dataProducts }) {
 											}`}
 											onClick={(event) => {
 												if (isAgreeProduct) {
-													setIsPickedProductDone(true);
-													setProcessState("address");
-													getCity();
-													nProgress.start();
+													if (processState !== "address") {
+														setIsPickedProductDone(true);
+														// setProcessState("address");
+														// getProvince();
+														// getCity();
+														nProgress.start();
+													}
 												} else {
 													openModal();
 												}
