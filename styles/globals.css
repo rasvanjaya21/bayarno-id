@@ -48,22 +48,30 @@ a {
   background: #103bfb;
 } */
 
-
-@media screen and (min-width: 410px) {
+@media screen and (min-width: 400px) {
   
-.swiper {
-  width: 600px;
-  height: 384px;
-}
+  .swiper {
+    width: 462px;
+    height: 384px;
+  }
 
 }
 
-@media screen and (max-width: 410px) {
+@media screen and (min-width: 550px) {
   
-.swiper {
-  width: 314px;
-  height: 384px;
+  .swiper {
+    width: 600px;
+    height: 384px;
+  }
+
 }
+
+@media screen and (max-width: 400px) {
+  
+  .swiper {
+    width: 314px;
+    height: 384px;
+  }
 
 }
 
