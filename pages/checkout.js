@@ -1070,21 +1070,22 @@ export default function Checkout({ dataProducts }) {
 																							Data tidak ditemukan.
 																						</div>
 																					) : (
-																						filteredDataCity.map((item, index) => (
-																							<Combobox.Option
-																								key={index}
-																								value={item}
-																								className={({ active }) =>
-																									`${
-																										active
-																											? "text-white bg-primary-600"
-																											: "text-gray-900"
-																									} relative cursor-default select-none py-2 px-4 text-sm`
-																								}
-																							>
-																								{item.city_name}
-																							</Combobox.Option>
-																						))
+																						<></>
+																						// filteredDataCity.map((item, index) => (
+																						// 	<Combobox.Option
+																						// 		key={index}
+																						// 		value={item}
+																						// 		className={({ active }) =>
+																						// 			`${
+																						// 				active
+																						// 					? "text-white bg-primary-600"
+																						// 					: "text-gray-900"
+																						// 			} relative cursor-default select-none py-2 px-4 text-sm`
+																						// 		}
+																						// 	>
+																						// 		{item.city_name}
+																						// 	</Combobox.Option>
+																						// ))
 																					)}
 																				</Combobox.Options>
 																			</Transition>
@@ -1132,79 +1133,6 @@ export default function Checkout({ dataProducts }) {
 														<div className="text-xs mb-4 text-gray-500">
 															Ringkasan produk yang tersedia yang kamu beli
 														</div>
-														<div
-															id="invoice-pemilihan-produk"
-															className="bg-emerald-600 rounded-lg px-5 py-3.5 shadow-primary focus:outline-none"
-														>
-															<div className="w-full">
-																<div className="text-sm font-medium text-white">
-																	<div className="flex justify-between uppercase text-white">
-																		Invoice Pemilihan Produk{" "}
-																		<span>
-																			<CreditCardIcon className="w-4 h-4 inline-block" />
-																		</span>
-																	</div>
-
-																	<div className="border-t-2 my-3 border-dashed"></div>
-																	<div className="text-md flex justify-between ">
-																		<div>PRODUK</div>
-																		<div>{pickedProduct.name}</div>
-																	</div>
-																	<div className="text-md flex justify-between ">
-																		<div>VARIANT</div>
-																		<div>NaN</div>
-																	</div>
-																	<div className="border-t-2 my-3 border-dashed"></div>
-
-																	<div className="text-md flex justify-between ">
-																		<div>KUANTITAS</div>
-																		<div>
-																			<div>NaN</div>
-																		</div>
-																	</div>
-																	<div className="text-md flex justify-between ">
-																		<div>TOTAL HARGA</div>
-																		<div>NaN</div>
-																	</div>
-																	<div className="border-t-2 my-3 border-dashed"></div>
-																</div>
-																<div className="inline-flex text-justify text-white/50 text-xs">
-																	{`Selangkah lagi, silakan pilih variant dari produk ${pickedProduct.name} untuk melengkapi invoice`}
-																</div>
-																<div className="border-t-2 my-3 border-dashed"></div>
-																<div className="flex text-xs justify-between text-white/50">
-																	© 2022 by bayarno.id
-																	<span>
-																		{Intl.DateTimeFormat("en-GB", {
-																			year: "numeric",
-																			month: "2-digit",
-																			day: "2-digit",
-																			hour: "2-digit",
-																			minute: "2-digit",
-																			second: "2-digit",
-																		}).format(timestampProduct)}
-																	</span>
-																</div>
-															</div>
-														</div>
-														<div className="border-t-2 my-6 border-dashed"></div>
-														<button
-															type="submit"
-															className="w-full bg-primary shadow-primary p-2 rounded-lg text-white"
-															onClick={(event) => {
-																event.preventDefault();
-																if (isAgreeProduct) {
-																	setIsPickedProductDone(true);
-																	// setProcessState("address");
-																	getCity();
-																	nProgress.start();
-																} else {
-																	openModal();
-																}
-															}}
-														>
-															Lanjutkan Proses
-														</button>
 													</div>
 												</div>
 											</div>
