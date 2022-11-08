@@ -1531,7 +1531,7 @@ Calculate Postage
 // 	return { props: { dataProvince, dataCity, dataCost } };
 // }
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
 	const resProducts = await fetch(`https://bayarno.vercel.app/api/products`, {
 		headers: {
 			keys: "bayarno.id",
