@@ -46,6 +46,8 @@ export default function ListProducts( { label, data } ) {
 
 	const pickedLabel = label;
 
+	console.log( filteredPeople );
+	
 	return (
 		<div className="w-full">
 			<Combobox value={selected} onChange={setSelected}>
