@@ -7,15 +7,15 @@ export default function handler(req, res) {
                     description: "Tersedia 3 variant atau paket new",
                     variants: [
                         {
-                            name: "1 Box Seedperapat",
+                            name: "1 Box Seedperapat new",
                             price: 245,
                         },
                         {
-                            name: "2 Box Seedperapat",
+                            name: "2 Box Seedperapat new",
                             price: 450,
                         },
                         {
-                            name: "4 Box Seedperapat",
+                            name: "4 Box Seedperapat new",
                             price: 850,
                         },
                     ]
