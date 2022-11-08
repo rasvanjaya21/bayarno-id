@@ -46,7 +46,7 @@ export default function ListProducts( { label, data } ) {
 
 	const pickedLabel = label;
 
-	console.log( filteredPeople );
+	// console.log( filteredPeople );
 	
 	return (
 		<div className="w-full">
