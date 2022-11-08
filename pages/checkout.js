@@ -420,44 +420,44 @@ export default function Checkout({ dataProducts }) {
 																				value={product}
 																				className={({ active, checked }) =>
 																					`${active ? "" : ""}
-																					 ${checked ? "bg-primary-600 text-white" : "bg-white"} relative flex cursor-pointer rounded-lg px-5 py-3.5 shadow-primary focus:outline-none`
+																					 ${
+																							checked
+																								? "bg-primary-600 text-white"
+																								: "bg-white"
+																						} relative flex cursor-pointer rounded-lg px-5 py-3.5 shadow-primary focus:outline-none`
 																				}
 																			>
 																				{({ active, checked }) => (
-																					
-																						<div className="flex w-full items-center justify-between">
-																							<div className="flex items-center">
-																								<div className="text-sm">
-																									<p
-																										className={`font-medium  ${
-																											checked
-																												? "text-white"
-																												: "text-gray-900"
-																										}`}
-																									>
-																										{product.name}
-																									</p>
-																									<span
-																										className={`inline ${
-																											checked
-																												? "text-white"
-																												: "text-gray-500"
-																										} text-xs`}
-																									>
-																										<span className="text-justify">
-																											{typeof product.description ===
-																											"number"
-																												? `Rp. ${product.description}.000`
-																												: product.description}
-																										</span>
+																					<div className="flex w-full items-center justify-between">
+																						<div className="flex items-center">
+																							<div className="text-sm">
+																								<p
+																									className={`font-medium  ${
+																										checked
+																											? "text-white"
+																											: "text-gray-900"
+																									}`}
+																								>
+																									{product.name}
+																								</p>
+																								<span
+																									className={`inline ${
+																										checked
+																											? "text-white"
+																											: "text-gray-500"
+																									} text-xs`}
+																								>
+																									<span className="text-justify">
+																										{typeof product.description ===
+																										"number"
+																											? `Rp. ${product.description}.000`
+																											: product.description}
 																									</span>
-																								</div>
+																								</span>
 																							</div>
-																							{checked && (
-																								<CheckIcon/>
-																							)}
 																						</div>
-																					
+																						{checked && <CheckIcon />}
+																					</div>
 																				)}
 																			</RadioGroup.Option>
 																		))}
@@ -628,7 +628,7 @@ export default function Checkout({ dataProducts }) {
 																	<div className="border-t-2 my-3 border-dashed"></div>
 																</div>
 																<div className="inline-flex text-justify text-white/50 text-xs">
-																	{`Silakan pilih setidaknya produk terlebih dahulu untuk melengkapi invoice`}
+																	{`NaN :  Anda belum memilih produk dan variant apapun.`}
 																</div>
 															</div>
 														</div>
@@ -712,7 +712,7 @@ export default function Checkout({ dataProducts }) {
 																	</div>
 																	{pickedVariantProduct === "" ? (
 																		<div className="inline-flex text-justify text-white/50 text-xs">
-																			{`NaN :  Anda telah memilih produk ${pickedProduct.name} tapi belum memilih varian produknya. Silahkan pilih varian produk terlebih dahulu.`}
+																			{`Selangkah lagi, silakan pilih variant dari produk ${pickedProduct.name} untuk melengkapi invoice`}
 																		</div>
 																	) : (
 																		<>
