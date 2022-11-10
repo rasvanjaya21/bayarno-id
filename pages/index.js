@@ -1,5 +1,5 @@
 import Head from "next/head";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Fragment } from "react";
 import { Popover, Transition } from "@headlessui/react";
 import { Bars3Icon, BoltIcon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -43,17 +43,24 @@ export default function Home() {
 		},
 	];
 
-	const [scrollPosition, setScrollPosition] = React.useState(0);
-	const [isScrolled, setIsScrolled] = React.useState(false);
+	const [scrollPosition, setScrollPosition] = useState(0);
+	const [isScrolled, setIsScrolled] = useState(false);
 
-	const [isNavOpen, setIsNavOpen] = React.useState(false);
+	const [isNavOpen, setIsNavOpen] = useState(false);
 
 	const handleScroll = () => {
 		const position = window.pageYOffset;
 		setScrollPosition(position);
 	};
 
-	React.useEffect(() => {
+	useEffect(() => {
+
+		if (isNavOpen) {
+			document.body.classList.add("overflow-hidden");
+		} else {
+			document.body.classList.remove("overflow-hidden");
+		}
+
 		window.addEventListener("scroll", handleScroll, { passive: true });
 
 		if (scrollPosition > 5) {
@@ -63,7 +70,7 @@ export default function Home() {
 		}
 
 		// getCity();
-	}, [scrollPosition, isScrolled]);
+	}, [scrollPosition, isScrolled, isNavOpen]);
 
 	return (
 		<>
