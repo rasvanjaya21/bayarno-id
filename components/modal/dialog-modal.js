@@ -57,7 +57,7 @@ export default function DialogModal({isOpen, closeModal, title, firstDescription
 								<div className="mt-4">
 									<button
 										type="button"
-										className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-primary"
+										className="inline-flex justify-center rounded-md w-full border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-primary"
 										onClick={(event) => {
 											closeModal();
 										}}
