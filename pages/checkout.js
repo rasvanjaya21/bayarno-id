@@ -12,6 +12,7 @@ import {
 	ShoppingBagIcon,
 	XMarkIcon,
 	TagIcon,
+	PhotoIcon,
 } from "@heroicons/react/24/outline";
 import DeliveryAnimation from "../components/delivery/delivery-animation";
 import PatternAnimation from "../components/pattern/pattern-animation";
@@ -83,7 +84,7 @@ export default function Checkout({ dataProducts }) {
 
 	const [isNavOpen, setIsNavOpen] = useState(false);
 
-	const [processState, setProcessState] = useState("products");
+	const [processState, setProcessState] = useState("gallery");
 	const [isPickedProductDone, setIsPickedProductDone] = useState(false);
 	const [isAgreeProduct, setIsAgreeProduct] = useState(false);
 
@@ -101,18 +102,18 @@ export default function Checkout({ dataProducts }) {
 
 	const [isOpen, setIsOpen] = useState(false);
 
-	const [pickedSenderName, setPickedSenderName] = useState("");
-	const [pickedSenderWhatsApp, setPickedSenderWhatsApp] = useState("");
-	const [pickedSenderAddress, setPickedSenderAddress] = useState("");
+	const [pickedReceiverName, setPickedReceiverName] = useState("");
+	const [pickedReceiverWhatsApp, setPickedReceiverWhatsApp] = useState("");
+	const [pickedReceiverAddress, setPickedReceiverAddress] = useState("");
 
 	const [dataProvince, setDataProvince] = useState("");
-	const [selectedDataProvince, setSelectedDataProvince] = useState(dataProvince);
+	const [pickedReceiverProvince, setPickedReceiverProvince] = useState(dataProvince);
 	const [queryDataProvince, setQueryDataProvince] = useState("");
 
 	const filteredDataProvince = queryDataProvince === "" ? dataProvince : dataProvince.filter((items) => items.province.toLowerCase().includes(queryDataProvince.toLowerCase()));
 	
 	const [dataCity, setDataCity] = useState("");
-	const [selectedDataCity, setSelectedDataCity] = useState(dataCity);
+	const [pickedReceiverCity, setPickedReceiverCity] = useState(dataCity);
 	const [queryDataCity, setQueryDataCity] = useState("");
 
 	const filteredDataCity = queryDataCity === "" ? dataCity : dataCity.filter((items) => items.city_name.toLowerCase().includes(queryDataCity.toLowerCase()));
@@ -146,6 +147,14 @@ export default function Checkout({ dataProducts }) {
 	}
 
 	useEffect(() => {
+
+		// if isNavOpen is true then add overflow-hidden class to body
+		if (isNavOpen) {
+			document.body.classList.add("overflow-hidden");
+		} else {
+			document.body.classList.remove("overflow-hidden");
+		}
+
 		window.addEventListener("scroll", handleScroll, { passive: true });
 
 		if (scrollPosition > 5) {
@@ -153,11 +162,12 @@ export default function Checkout({ dataProducts }) {
 		} else {
 			setIsScrolled(false);
 		}
-		console.log("selected data Provinsi", selectedDataProvince ? selectedDataProvince : "kosong");
-		console.log("selected data City", selectedDataCity ? selectedDataCity : "kosong");
+		console.log("selected data Provinsi", pickedReceiverProvince ? pickedReceiverProvince : "kosong");
+		console.log("selected data City", pickedReceiverCity ? pickedReceiverCity : "kosong");
 		console.log("length of datacity", dataCity.length);
 		console.log("filtered data city", filteredDataCity);
-	}, [scrollPosition, isScrolled, selectedDataProvince, selectedDataCity, dataCity, filteredDataCity]);
+
+	}, [scrollPosition, isScrolled, pickedReceiverProvince, pickedReceiverCity, dataCity, filteredDataCity, isNavOpen]);
 
 	useEffect(() => {
 		if (processState === "products") {
@@ -201,7 +211,7 @@ export default function Checkout({ dataProducts }) {
 	}
 
 	function getCity() {
-		fetch(`https://bayarno.vercel.app/api/city?provinsiId=${selectedDataProvince.province_id}`, {
+		fetch(`https://bayarno.vercel.app/api/city?provinsiId=${pickedReceiverProvince.province_id}`, {
 			method: "GET",
 			headers: {
 				keys: "bayarno.id",
@@ -239,7 +249,7 @@ export default function Checkout({ dataProducts }) {
 			</Head>
 			<Script src="https://www.google.com/recaptcha/api.js" />
 
-			<div className="overflow-hidden w-screen">
+			<div className="w-screen">
 				{isNavOpen ? (
 					<div
 						className={
@@ -349,7 +359,93 @@ export default function Checkout({ dataProducts }) {
 						</div>
 						<main className="mx-auto mt-4">
 							<div className="lg:flex-row w-12/12 w-full">
-								{processState === "products" ? (
+								{processState === "gallery" ? (
+									<>
+										<div className="flex-row w-12/12  pt-4 p-6 bg-blue-50 bg-opacity-90 rounded-xl">
+											<div className="w-12/12">
+												<div className="text-md text-primary-600	">
+													# Preview Produk
+												</div>
+												<div className="text-xs mb-4 text-gray-500">
+													Daftar produk yang kami tawarkan
+												</div>
+											</div>
+											<div className="flex flex-col sm:flex-row w-12/12 space-x-0 sm:space-x-2 lg:space-x-3">
+												<div className="hidden sm:flex flex-col lg:w-4/12">
+													<div className=" rounded-lg">
+														<Image
+															className="rounded-lg hover:shadow-primary hover:transition-all duration-300"
+															src="/first-product-preview.png"
+															width={314}
+															height={384}
+															alt="Preview Product"
+															layout="cover"
+															priority={true}
+														/>
+													</div>
+												</div>
+
+												<div className="hidden sm:flex flex-col lg:w-4/12">
+													<div className=" rounded-lg">
+														<Image
+															className="rounded-lg hover:shadow-primary hover:transition-all duration-300"
+															src="/second-product-preview.png"
+															width={314}
+															height={384}
+															alt="Preview Product"
+															layout="cover"
+															priority={true}
+														/>
+													</div>
+												</div>
+
+												<div className="hidden sm:flex flex-col lg:w-4/12">
+													<div className=" rounded-lg">
+														<Image
+															className="rounded-lg hover:shadow-primary hover:transition-all duration-300"
+															src="/third-product-preview.png"
+															width={314}
+															height={384}
+															alt="Preview Product"
+															layout="cover"
+															priority={true}
+														/>
+													</div>
+												</div>
+
+												<div className="hidden sm:flex flex-col lg:w-4/12">
+													<div className=" rounded-lg">
+														<Image
+															className="rounded-lg hover:shadow-primary hover:transition-all duration-300"
+															src="/fourth-product-preview.png"
+															width={314}
+															height={384}
+															alt="Preview Product"
+															layout="cover"
+															priority={true}
+														/>
+													</div>
+												</div>
+												<div className="flex flex-col lg:w-4/12 sm:hidden rounded-xl shadow-primary">
+													<Swiper
+														className="rounded-xl"
+														spaceBetween={30}
+														autoplay={{
+															delay: 2500,
+															disableOnInteraction: false,
+														}}
+														modules={[Autoplay]}
+													>
+														<SwiperSlide className="rounded-xl"></SwiperSlide>
+														<SwiperSlide className="rounded-xl"></SwiperSlide>
+														<SwiperSlide className="rounded-xl"></SwiperSlide>
+														<SwiperSlide className="rounded-xl"></SwiperSlide>
+													</Swiper>
+												</div>
+											</div>
+										</div>
+									</>
+								) : processState === "products" ? (
 									<>
 										<DialogModal
 											isOpen={isOpen}
@@ -359,89 +455,6 @@ export default function Checkout({ dataProducts }) {
 											secondDescription={`Harap menyetujui syarat dan ketentuan terlebih dahulu untuk melanjutkan proses pembelian.`}
 										/>
 										<div className="space-y-6 pb-32 md:pb-12">
-											<div className="flex-row w-12/12  pt-4 p-6 bg-blue-50 bg-opacity-90 rounded-xl">
-												<div className="w-12/12">
-													<div className="text-md text-primary-600	">
-														# Preview Produk
-													</div>
-													<div className="text-xs mb-4 text-gray-500">
-														Daftar produk yang kami tawarkan
-													</div>
-												</div>
-												<div className="flex flex-col sm:flex-row w-12/12 space-x-0 sm:space-x-2 lg:space-x-3">
-													<div className="hidden sm:flex flex-col lg:w-4/12">
-														<div className=" rounded-lg">
-															<Image
-																className="rounded-lg hover:shadow-primary hover:transition-all duration-300"
-																src="/first-product-preview.png"
-																width={314}
-																height={384}
-																alt="Preview Product"
-																layout="cover"
-																priority={true}
-															/>
-														</div>
-													</div>
-
-													<div className="hidden sm:flex flex-col lg:w-4/12">
-														<div className=" rounded-lg">
-															<Image
-																className="rounded-lg hover:shadow-primary hover:transition-all duration-300"
-																src="/second-product-preview.png"
-																width={314}
-																height={384}
-																alt="Preview Product"
-																layout="cover"
-																priority={true}
-															/>
-														</div>
-													</div>
-
-													<div className="hidden sm:flex flex-col lg:w-4/12">
-														<div className=" rounded-lg">
-															<Image
-																className="rounded-lg hover:shadow-primary hover:transition-all duration-300"
-																src="/third-product-preview.png"
-																width={314}
-																height={384}
-																alt="Preview Product"
-																layout="cover"
-																priority={true}
-															/>
-														</div>
-													</div>
-
-													<div className="hidden sm:flex flex-col lg:w-4/12">
-														<div className=" rounded-lg">
-															<Image
-																className="rounded-lg hover:shadow-primary hover:transition-all duration-300"
-																src="/fourth-product-preview.png"
-																width={314}
-																height={384}
-																alt="Preview Product"
-																layout="cover"
-																priority={true}
-															/>
-														</div>
-													</div>
-													<div className="flex flex-col lg:w-4/12 sm:hidden rounded-xl shadow-primary">
-														<Swiper
-															className="rounded-xl"
-															spaceBetween={30}
-															autoplay={{
-																delay: 2500,
-																disableOnInteraction: false,
-															}}
-															modules={[Autoplay]}
-														>
-															<SwiperSlide className="rounded-xl"></SwiperSlide>
-															<SwiperSlide className="rounded-xl"></SwiperSlide>
-															<SwiperSlide className="rounded-xl"></SwiperSlide>
-															<SwiperSlide className="rounded-xl"></SwiperSlide>
-														</Swiper>
-													</div>
-												</div>
-											</div>
 											<div className="lg:flex space-y-6 lg:space-y-0 lg:space-x-6 lg:w-12/12">
 												<div className="flex-row w-12/12 lg:w-6/12 pt-4 p-6 bg-blue-50 bg-opacity-90 rounded-xl">
 													<div className="w-12/12">
@@ -480,7 +493,7 @@ export default function Checkout({ dataProducts }) {
 																					{({ active, checked }) => (
 																						<div className="flex w-full items-center justify-between">
 																							<div className="flex items-center">
-																								<div className="text-sm">
+																								<div className="text-xs">
 																									<p
 																										className={`font-medium  ${
 																											checked
@@ -529,9 +542,9 @@ export default function Checkout({ dataProducts }) {
 														{pickedProduct === "" ? (
 															<div className="bg-red-400 rounded-lg px-5 py-3.5 shadow-primary focus:outline-none">
 																<div className="w-full">
-																	<div className="text-sm font-medium text-white">
+																	<div className="text-xs font-medium text-white">
 																		<>
-																			<span className="bg-white/80 text-red-400 px-1">
+																			<span className=" text-white">
 																				Anda belum memilih produk
 																			</span>
 																		</>
@@ -593,7 +606,7 @@ export default function Checkout({ dataProducts }) {
 																							{({ active, checked }) => (
 																								<div className="flex w-full items-center justify-between">
 																									<div className="flex items-center">
-																										<div className="text-sm">
+																										<div className="text-xs">
 																											<p
 																												className={`font-medium  ${
 																													checked
@@ -644,9 +657,9 @@ export default function Checkout({ dataProducts }) {
 														{pickedVariantProduct === "" ? (
 															<div className="bg-red-400 rounded-lg px-5 py-3.5 shadow-primary focus:outline-none">
 																<div className="w-full">
-																	<div className="text-sm font-medium text-white">
+																	<div className="text-xs font-medium text-white">
 																		<>
-																			<span className="bg-white/80 text-red-400 px-1">
+																			<span className="text-white">
 																				Anda belum memilih variant
 																			</span>
 																		</>
@@ -663,7 +676,7 @@ export default function Checkout({ dataProducts }) {
 															<>
 																<div className="w-full">
 																	<div className="relative">
-																		<div className="relative  py-5 text-sm w-full  overflow-hidden rounded-xl bg-white text-left shadow-primary  sm:text-sm">
+																		<div className="relative  py-5 text-xs w-full  overflow-hidden rounded-xl bg-white text-left shadow-primary ">
 																			<div className="text-xs absolute inset-y-0 p-3 m-[3px] rounded-tl-lg rounded-bl-lg text-white flex items-center  bg-primary-600 w-fit">
 																				Kuantitas
 																			</div>
@@ -726,9 +739,9 @@ export default function Checkout({ dataProducts }) {
 														{pickedProduct === "" ? (
 															<div className="bg-red-400 rounded-lg px-5 py-3.5 shadow-primary focus:outline-none">
 																<div className="w-full">
-																	<div className="text-sm font-medium text-white">
-																		<span className="bg-white/80 text-red-400 px-1">
-																			Invoice Produk, Variant, dan Kuantitas
+																	<div className="text-xs text-white">
+																		<span className="text-white font-medium px-1 uppercase">
+																			RINCIAN PENGISIAN PRODUK
 																		</span>
 
 																		<div className="border-t-2 my-3 border-dashed"></div>
@@ -760,13 +773,13 @@ export default function Checkout({ dataProducts }) {
 														) : (
 															<>
 																<div
-																	id="invoice-pemilihan-produk"
-																	className="bg-emerald-600 rounded-lg px-5 py-3.5 shadow-primary focus:outline-none"
+																	id="invoice-pembelian-produk"
+																	className="bg-primary-600 rounded-lg px-5 py-3.5 shadow-primary focus:outline-none"
 																>
 																	<div className="w-full">
-																		<div className="text-sm font-medium text-white">
-																			<div className="flex justify-between uppercase text-white">
-																				Invoice Pemilihan Produk{" "}
+																		<div className="text-xs text-white">
+																			<div className="flex  justify-between uppercase text-white">
+																				Rincian pengisian Produk{" "}
 																				<span>
 																					<CreditCardIcon className="w-4 h-4 inline-block" />
 																				</span>
@@ -879,26 +892,10 @@ export default function Checkout({ dataProducts }) {
 																) : (
 																	<>
 																		<div className="text-xs pt-6 text-gray-500">
-																			Notes : simpan invoice sebagai bukti
-																			pemilihan produk, jika dibutuhkan.{" "}
-																			<span
-																				className="text-primary cursor-pointer hover:underline"
-																				onClick={(event) => {
-																					event.preventDefault();
-																					html2canvas(
-																						document.querySelector(
-																							"#invoice-pemilihan-produk"
-																						)
-																					).then((canvas) => {
-																						saveAsImage(
-																							canvas.toDataURL(),
-																							"invoice-pemilihan-produk.png"
-																						);
-																					});
-																				}}
-																			>
-																				Download Invoice Pemilihan Produk
-																			</span>
+																			<span className="font-bold">Notes</span> :
+																			harap mengecek kembali data yang telah di
+																			input kan sebelum melanjutkan ke tahap
+																			berikutnya.
 																		</div>
 																		<div className="border-t-2 my-6 border-dashed"></div>
 																		<div className="flex items-center mb-6">
@@ -910,7 +907,7 @@ export default function Checkout({ dataProducts }) {
 																				}}
 																				className="w-4 h-4 text-blue-600 cursor-pointer"
 																			/>
-																			<label className="ml-2 text-xs font-medium text-gray-500">
+																			<label className="ml-2 text-xs text-gray-500">
 																				Saya menyetujui
 																				<span className="text-primary">
 																					{" "}
@@ -921,11 +918,11 @@ export default function Checkout({ dataProducts }) {
 																		</div>
 																		<button
 																			type="submit"
-																			className="w-full bg-primary shadow-primary p-2 rounded-lg text-white"
+																			className="w-full bg-primary shadow-primary p-2 rounded-lg text-white text-sm"
 																			onClick={(event) => {
 																				if (isAgreeProduct) {
-																					setIsPickedProductDone(true);
 																					nProgress.start();
+																					setIsPickedProductDone(true);
 																					getProvince();
 																					// getCity();
 																				} else {
@@ -963,15 +960,16 @@ export default function Checkout({ dataProducts }) {
 																{/* <ListProducts label="Nama Lengkap" /> */}
 																<div className="w-full">
 																	<div className="relative">
-																		<div className="relative w-full cursor-default overflow-hidden rounded-xl bg-white text-left shadow-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
+																		<div className="relative w-full cursor-default overflow-hidden rounded-xl bg-white text-left shadow-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300">
 																			<div className="text-xs absolute inset-y-0 pl-3 m-[3px] rounded-tl-lg rounded-bl-lg text-white bg-primary flex items-center  w-[115px]">
 																				Nama Lengkap
 																			</div>
 																			<input
 																				className="w-full border-none py-2 pl-[127px] pr-2 text-xs leading-5 text-gray-900 focus:ring-0 outline-none"
-																				placeholder="Kakek Merah"
+																				placeholder="Nama Penerima"
+																				value={pickedReceiverName}
 																				onChange={(event) => {
-																					setPickedSenderName(
+																					setPickedReceiverName(
 																						event.target.value
 																					);
 																				}}
@@ -981,15 +979,16 @@ export default function Checkout({ dataProducts }) {
 																</div>
 																<div className="w-full">
 																	<div className="relative">
-																		<div className="relative w-full cursor-default overflow-hidden rounded-xl bg-white text-left shadow-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
+																		<div className="relative w-full cursor-default overflow-hidden rounded-xl bg-white text-left shadow-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300">
 																			<div className="text-xs absolute inset-y-0 pl-3 m-[3px] rounded-tl-lg rounded-bl-lg text-white bg-primary flex items-center  w-[115px]">
 																				Nomor WhatsApp
 																			</div>
 																			<input
 																				className="w-full border-none py-2 pl-[127px] pr-2 text-xs leading-5 text-gray-900 focus:ring-0 outline-none"
-																				placeholder="081234567890"
+																				placeholder="08xxxxxxxxxx"
+																				value={pickedReceiverWhatsApp}
 																				onChange={(event) => {
-																					setPickedSenderWhatsApp(
+																					setPickedReceiverWhatsApp(
 																						event.target.value
 																					);
 																				}}
@@ -1013,15 +1012,16 @@ export default function Checkout({ dataProducts }) {
 															<div className="space-y-4">
 																<div className="w-full">
 																	<div className="relative">
-																		<div className="relative w-full cursor-default overflow-hidden rounded-xl bg-white text-left shadow-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
+																		<div className="relative w-full cursor-default overflow-hidden rounded-xl bg-white text-left shadow-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300">
 																			<div className="text-xs absolute inset-y-0 pl-3 m-[3px] rounded-tl-lg rounded-bl-lg text-white bg-primary flex items-center  w-[115px]">
 																				Alamat Lengkap
 																			</div>
 																			<input
 																				className="w-full border-none py-2 pl-[127px] pr-2 text-xs leading-5 text-gray-900 focus:ring-0 outline-none"
 																				placeholder="Jalan, Kelurahan, Kecamatan, Kode Pos"
+																				value={pickedReceiverAddress}
 																				onChange={(event) => {
-																					setPickedSenderAddress(
+																					setPickedReceiverAddress(
 																						event.target.value
 																					);
 																				}}
@@ -1032,22 +1032,22 @@ export default function Checkout({ dataProducts }) {
 
 																<div className="w-full">
 																	<Combobox
-																		value={selectedDataProvince}
-																		onChange={setSelectedDataProvince}
+																		value={pickedReceiverProvince}
+																		onChange={setPickedReceiverProvince}
 																	>
 																		<div className="relative">
-																			<div className="relative w-full cursor-default overflow-hidden rounded-xl bg-white text-left shadow-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
+																			<div className="relative w-full cursor-default overflow-hidden rounded-xl bg-white text-left shadow-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300">
 																				<Combobox.Input
 																					className="w-full border-none py-2 pl-[127px] pr-2 text-xs leading-5 text-gray-900 focus:ring-0 outline-none"
 																					displayValue={(items) =>
 																						items.province
 																					}
-																					placeholder="Jawa Timur"
+																					placeholder="Nama Provinsi"
 																					onChange={(event) => {
 																						setQueryDataProvince(
 																							event.target.value
 																						);
-																						console.log(selectedDataProvince);
+																						console.log(pickedReceiverProvince);
 																						getCity();
 																					}}
 																				/>
@@ -1073,7 +1073,7 @@ export default function Checkout({ dataProducts }) {
 																					setQueryDataProvince("")
 																				}
 																			>
-																				<Combobox.Options className="z-10 scroll-smooth absolute mt-3 max-h-[270px] w-full overflow-auto rounded-md bg-white text-xs shadow-primary ring-1 ring-black ring-opacity-5  sm:text-sm">
+																				<Combobox.Options className="z-10 scroll-smooth absolute mt-3 max-h-[270px] w-full overflow-auto rounded-md bg-white text-xs shadow-primary ring-1 ring-black ring-opacity-5">
 																					{filteredDataProvince.length === 0 &&
 																					queryDataProvince !== "" ? (
 																						<div className="relative cursor-default select-none py-2 px-4 text-gray-700">
@@ -1133,16 +1133,16 @@ export default function Checkout({ dataProducts }) {
 
 																<div className="w-full">
 																	<Combobox
-																		value={selectedDataCity}
-																		onChange={setSelectedDataCity}
+																		value={pickedReceiverCity}
+																		onChange={setPickedReceiverCity}
 																	>
 																		<div className="relative">
-																			<div className="relative w-full cursor-default overflow-hidden rounded-xl bg-white text-left shadow-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
+																			<div className="relative w-full cursor-default overflow-hidden rounded-xl bg-white text-left shadow-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300">
 																				{dataCity.length === 0 ? (
 																					<input
 																						disabled
 																						className="w-full border-none py-2 pl-[127px] pr-2 text-xs leading-5 text-gray-900 focus:ring-0 outline-none"
-																						placeholder="Gresik"
+																						placeholder="Nama Kota / Kabupaten"
 																					/>
 																				) : (
 																					<Combobox.Input
@@ -1150,12 +1150,12 @@ export default function Checkout({ dataProducts }) {
 																						displayValue={(items) =>
 																							items.city_name
 																						}
-																						placeholder="Gresik"
+																						placeholder="Nama Kota / Kabupaten"
 																						onChange={(event) => {
 																							setQueryDataCity(
 																								event.target.value
 																							);
-																							console.log(selectedDataCity);
+																							console.log(pickedReceiverCity);
 																						}}
 																					/>
 																				)}
@@ -1179,57 +1179,8 @@ export default function Checkout({ dataProducts }) {
 																					setQueryDataCity("")
 																				}
 																			>
-																				<Combobox.Options className="z-10 scroll-smooth absolute mt-3 max-h-[270px] w-full overflow-auto rounded-md bg-white text-xs shadow-primary ring-1 ring-black ring-opacity-5  sm:text-sm">
-																					{/* {filteredDataCity.length === 0 &&
-																					queryDataCity !== "" ? (
-																						<div className="relative cursor-default select-none py-2 px-4 text-gray-700">
-																							Data tidak ditemukan
-																						</div>
-																					) : (
-																						// <></>
-																						filteredDataCity.map((items) => (
-																							<Combobox.Option
-																								key={items.city_id}
-																								value={items}
-																								className={({ active }) =>
-																									`relative cursor-default select-none py-2 m-3 pl-3 pr-4 ${
-																										active
-																											? "bg-primary-600 text-white rounded-md"
-																											: "text-gray-900"
-																									}`
-																								}
-																							>
-																								{({ selected, active }) => (
-																									<>
-																										<span
-																											className={`block truncate ${
-																												selected
-																													? "font-medium"
-																													: "font-normal"
-																											}`}
-																										>
-																											{items.city_name}
-																										</span>
-																										{selected ? (
-																											<span
-																												className={`absolute inset-y-0 right-0 flex items-center mr-2 ${
-																													active
-																														? "text-white"
-																														: "text-primary-600"
-																												}`}
-																											>
-																												<CheckIcon
-																													className="h-5 w-5"
-																													aria-hidden="true"
-																												/>
-																											</span>
-																										) : null}
-																									</>
-																								)}
-																							</Combobox.Option>
-																						))
-																					)} */}
-																					{selectedDataProvince === "" ? (
+																				<Combobox.Options className="z-10 scroll-smooth absolute mt-3 max-h-[270px] w-full overflow-auto rounded-md bg-white text-xs shadow-primary ring-1 ring-black ring-opacity-5">
+																					{pickedReceiverProvince === "" ? (
 																						<button
 																							disabled
 																							className="relative cursor-default select-none py-2 px-4 text-gray-700"
@@ -1306,7 +1257,7 @@ export default function Checkout({ dataProducts }) {
 															<div className="space-y-4">
 																<div className="w-full">
 																	<div className="relative">
-																		<div className="relative w-full cursor-default overflow-hidden rounded-xl bg-white text-left shadow-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
+																		<div className="relative w-full cursor-default overflow-hidden rounded-xl bg-white text-left shadow-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300">
 																			<div className="text-xs absolute inset-y-0 pl-3 m-[3px] rounded-tl-lg rounded-bl-lg text-white bg-primary flex items-center  w-[115px]">
 																				Catatan Penerima
 																			</div>
@@ -1330,54 +1281,17 @@ export default function Checkout({ dataProducts }) {
 														<div className="text-xs mb-4 text-gray-500">
 															Ringkasan produk yang tersedia yang kamu beli
 														</div>
+														<div className="border-t-2 my-6 border-dashed"></div>
+														<div>{pickedReceiverName}</div>
+														<div>{pickedReceiverWhatsApp}</div>
+														<div>{pickedReceiverAddress}</div>
+														<div>{pickedReceiverProvince.province}</div>
+														<div>{pickedReceiverCity.city_name}</div>
 													</div>
 												</div>
 											</div>
 										</div>
-										{/* <div className="lg:w-4/8 flex-auto pt-4 p-6 bg-blue-50 bg-opacity-90 rounded-xl">
-											<div className="text-md text-primary-600	">
-												{"# Alamat dan Data Pengiriman"}
-											</div>
-											<div className="text-xs mb-4 text-gray-500">
-												Silakan isi alamat lengkap dan data pengiriman anda
-											</div>
-											<div className="space-y-4">
-												<div className="w-full ">
-													<div className="relative">
-														<div className="relative  py-5 text-sm w-full cursor-default overflow-hidden rounded-xl bg-white text-left shadow-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
-															<button className="text-xs absolute inset-y-0 pl-3 m-[3px] rounded-tl-lg rounded-bl-lg text-white flex items-center  bg-primary-600 w-full">
-																{`Alamat Lengkap : Contoh : Jl. KH Syafi'i, Ds. Suci, Kec. Gresik`}
-															</button>
-															<button className="absolute inset-y-0 right-0 flex items-center pr-2">
-																<BookmarkIcon
-																	className="h-5 w-5 text-white"
-																	aria-hidden="true"
-																/>
-															</button>
-														</div>
-													</div>
-												</div>
-												<div className="w-full ">
-													<div className="relative">
-														<div className="relative w-full cursor-default h-fit overflow-hidden rounded-xl bg-white text-left shadow-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
-															<input
-																placeholder="Contoh : Jl. KH Syafi'i, Ds. Suci, Kec. Gresik"
-																className="w-full border-none py-2  pr-10 text-sm leading-5 text-gray-900 focus:ring-0 outline-none"
-																onChange={(event) =>
-																	console.log(event.target.value)
-																}
-															/>
-															<button className="absolute inset-y-0 right-0 flex items-center pr-2">
-																<BookmarkIcon
-																	className="h-5 w-5 text-gray-400"
-																	aria-hidden="true"
-																/>
-															</button>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div> */}
+										
 									</>
 								) : processState === "postage" ? (
 									<div className="lg:w-8/12 bg-blue-50 bg-opacity-90 rounded-xl lg:mr-12">
@@ -1412,9 +1326,7 @@ export default function Checkout({ dataProducts }) {
 											</div>
 										</div>
 										<div className="lg:w-4/8 flex-auto px-6">
-											<div className="border-t-2 border-dashed">
-												{/* {"# Tujuan Pengiriman"} */}
-											</div>
+											<div className="border-t-2 border-dashed"></div>
 										</div>
 										<div className="lg:w-4/8 flex-auto pt-4 p-6">
 											<div className="text-md text-primary-600	">
@@ -1428,9 +1340,7 @@ export default function Checkout({ dataProducts }) {
 											</div>
 										</div>
 										<div className="lg:w-4/8 flex-auto px-6">
-											<div className="border-t-2 border-dashed">
-												{/* {"# Tujuan Pengiriman"} */}
-											</div>
+											<div className="border-t-2 border-dashed"></div>
 										</div>
 										<div className="lg:flex">
 											<div className="lg:w-4/8 flex-auto pt-4 p-6">
@@ -1507,14 +1417,47 @@ export default function Checkout({ dataProducts }) {
 									<div className="flex text-center w-12/12 m-3 mx-0 ">
 										<div
 											className={`${
+												processState === "gallery" || isPickedProductDone
+													? `flex-row justify-center mr-2 py-3 bg-primary rounded-xl w-3/12 cursor-pointer shadow-primary`
+													: `flex-row justify-center mr-2 py-3 bg-primary-700 bg-opacity-10 rounded-xl w-3/12 cursor-pointer`
+											}`}
+											onClick={(event) => {
+												if (processState !== "gallery") {
+													// nProgress.start();
+													// setProcessState("order");
+													setProcessState("gallery");
+												}
+											}}
+										>
+											<div className="flex place-content-center">
+												<PhotoIcon
+													className={`${
+														processState === "gallery" || isPickedProductDone
+															? `h-5 w-5 text-white `
+															: `h-5 w-5 text-primary`
+													}`}
+												/>
+											</div>
+											<div
+												className={`${
+													processState === "gallery" || isPickedProductDone
+														? `text-xs mt-1 text-center text-white `
+														: `text-xs mt-1 text-center text-primary`
+												}`}
+											>
+												Galeri
+											</div>
+										</div>
+										<div
+											className={`${
 												processState === "products" || isPickedProductDone
 													? `flex-row justify-center mr-2 py-3 bg-primary rounded-xl w-3/12 cursor-pointer shadow-primary`
 													: `flex-row justify-center mr-2 py-3 bg-primary-700 bg-opacity-10 rounded-xl w-3/12 cursor-pointer`
 											}`}
 											onClick={(event) => {
 												if (processState !== "products") {
-													// setProcessState("order");
 													nProgress.start();
+													// setProcessState("order");
 													setProcessState("products");
 												}
 											}}
@@ -1546,13 +1489,10 @@ export default function Checkout({ dataProducts }) {
 											}`}
 											onClick={(event) => {
 												if (isAgreeProduct) {
-													if (processState !== "address") {
-														setIsPickedProductDone(true);
-														// setProcessState("address");
-														// getProvince();
-														// getCity();
-														nProgress.start();
-													}
+													nProgress.start();
+													setIsPickedProductDone(true);
+													getProvince();
+													// getCity();
 												} else {
 													openModal();
 												}
@@ -1679,8 +1619,8 @@ VALID
 className="bg-primary-600 p-2 rounded-lg text-white"
 onClick={(event) => {
 // setShowModal(true);
-// Router.events(event);
 nProgress.start();
+// Router.events(event);
 
 // Router.events.on("onClick", nProgress.start);
 }}
