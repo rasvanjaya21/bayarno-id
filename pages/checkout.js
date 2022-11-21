@@ -686,7 +686,7 @@ export default function Checkout({ dataProducts }) {
 
 																			<div className="absolute inset-y-0 right-12 flex items-center ">
 																				<MinusIcon
-																					className="bg-primary-700/10 rounded-xl p-2 h-8 w-8 text-primary cursor-pointer"
+																					className="bg-primary/10 rounded-xl p-2 h-8 w-8 text-primary cursor-pointer"
 																					aria-hidden="true"
 																					onClick={(event) => {
 																						console.log("minus");
@@ -704,7 +704,7 @@ export default function Checkout({ dataProducts }) {
 																			</div>
 																			<div className="absolute inset-y-0 right-0 flex items-center pr-2">
 																				<PlusIcon
-																					className="bg-primary-700/10 rounded-xl p-2 h-8 w-8 text-primary cursor-pointer"
+																					className="bg-primary/10 rounded-xl p-2 h-8 w-8 text-primary cursor-pointer"
 																					aria-hidden="true"
 																					onClick={(event) => {
 																						console.log("plus");
@@ -1419,7 +1419,7 @@ export default function Checkout({ dataProducts }) {
 											className={`${
 												processState === "gallery" || isPickedProductDone
 													? `flex-row justify-center mr-2 py-3 bg-primary rounded-xl w-3/12 cursor-pointer shadow-primary`
-													: `flex-row justify-center mr-2 py-3 bg-primary-700 bg-opacity-10 rounded-xl w-3/12 cursor-pointer`
+													: `flex-row justify-center mr-2 py-3 bg-primary bg-opacity-10 rounded-xl w-3/12 cursor-pointer`
 											}`}
 											onClick={(event) => {
 												if (processState !== "gallery") {
@@ -1452,7 +1452,7 @@ export default function Checkout({ dataProducts }) {
 											className={`${
 												processState === "products" || isPickedProductDone
 													? `flex-row justify-center mr-2 py-3 bg-primary rounded-xl w-3/12 cursor-pointer shadow-primary`
-													: `flex-row justify-center mr-2 py-3 bg-primary-700 bg-opacity-10 rounded-xl w-3/12 cursor-pointer`
+													: `flex-row justify-center mr-2 py-3 bg-primary bg-opacity-10 rounded-xl w-3/12 cursor-pointer`
 											}`}
 											onClick={(event) => {
 												if (processState !== "products") {
@@ -1485,7 +1485,7 @@ export default function Checkout({ dataProducts }) {
 											className={`${
 												processState === "address"
 													? `flex-row justify-center mr-2 py-3 bg-primary rounded-xl w-3/12 cursor-pointer shadow-primary`
-													: `flex-row justify-center mr-2 py-3 bg-primary-700 bg-opacity-10 rounded-xl w-3/12 cursor-pointer`
+													: `flex-row justify-center mr-2 py-3 bg-primary bg-opacity-10 rounded-xl w-3/12 cursor-pointer`
 											}`}
 											onClick={(event) => {
 												if (isAgreeProduct) {
@@ -1521,7 +1521,7 @@ export default function Checkout({ dataProducts }) {
 											className={`${
 												processState === "postage"
 													? `flex-row justify-center mr-2 py-3 bg-primary rounded-xl w-3/12 cursor-pointer shadow-primary`
-													: `flex-row justify-center mr-2 py-3 bg-primary-700 bg-opacity-10 rounded-xl w-3/12 cursor-pointer`
+													: `flex-row justify-center mr-2 py-3 bg-primary bg-opacity-10 rounded-xl w-3/12 cursor-pointer`
 											}`}
 											onClick={(event) => {
 												setProcessState("postage");
@@ -1550,7 +1550,7 @@ export default function Checkout({ dataProducts }) {
 											className={`${
 												processState === "order"
 													? `flex-row justify-center py-3 bg-primary rounded-xl w-3/12 cursor-pointer shadow-primary`
-													: `flex-row justify-center p-3 bg-primary-700 bg-opacity-10 rounded-xl w-3/12 cursor-pointer`
+													: `flex-row justify-center p-3 bg-primary bg-opacity-10 rounded-xl w-3/12 cursor-pointer`
 											}`}
 											onClick={(event) => {
 												setProcessState("order");
